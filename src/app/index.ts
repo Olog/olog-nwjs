@@ -8,8 +8,21 @@ import favicon = require('serve-favicon');
 import morgan = require('morgan');
 import session = require('express-session');
 
+// load configuration start
+import authconfig = require('../../config/auth.js');
+
+//db connection
+import mysql = require('mysql');
+
 import handlers = require('./shared/handlers');
 import status = require('./shared/status');
+
+import IndexRouter = require('./routes/indexrouter');
+
+// authentication start
+import auth = require('./shared/authentication/auth');
+import casLdapAuth = require('./shared/authentication/cas-ldap-auth');
+
 
 // error interface
 interface StatusError extends Error {
@@ -98,6 +111,7 @@ async function start(): Promise<express.Application> {
     next();
   });
 
+
   try {
     await doStart();
   } catch (err) {
@@ -123,6 +137,7 @@ async function doStart(): Promise<void> {
 
   app.set('port', appCfg.port || '3000');
   app.set('addr', appCfg.addr || 'localhost');
+
 
   // view engine configuration
   app.set('views', path.resolve(__dirname, '../views'));
@@ -166,7 +181,22 @@ async function doStart(): Promise<void> {
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use(express.static(path.resolve(__dirname, '../bower_components')));
 
+  let con = mysql.createConnection({
+    host: "localhost",
+    user: "admin",
+    password: "",
+    database: "olog"
+  });
+
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Successfully connected to database");
+  });
+
   app.use('/status', status.router);
+
+  //set the routes for all the models and connection to the database
+  new IndexRouter(app, con);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -177,6 +207,12 @@ async function doStart(): Promise<void> {
 
   // error handlers
   app.use(handlers.requestErrorHandler);
+
+  auth.ensureAuthenticated = casLdapAuth.ensureAuthenticated({
+    ldap: authconfig.ad,
+    auth: authconfig.auth
+  });
+
 };
 
 // asynchronously stop the application

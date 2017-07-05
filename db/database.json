@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "driver": "mysql",
+    "host": "localhost",
+    "user": "admin",
+    "password": "",
+    "database": "olog"
+  },
+
+  "test": {
+    "driver": "mysql",
+    "filename": ":memory:"
+  },
+
+  "prod": {
+    "driver": "mysql",
+    "user": {"ENV": "PRODUCTION_USERNAME"},
+    "password": {"ENV": "PRODUCTION_PASSWORD"}
+  }
+}
