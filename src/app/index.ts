@@ -39,6 +39,7 @@ import mysql = require('mysql');
 import handlers = require('./shared/handlers');
 import status = require('./shared/status');
 
+<<<<<<< HEAD
 import IndexRouter = require('./routes/indexrouter');
 
 // authentication start
@@ -51,6 +52,8 @@ interface StatusError extends Error {
   status?: number;
 };
 
+=======
+>>>>>>> upstream/master
 // package metadata
 interface Package {
   name?: {};
@@ -282,8 +285,7 @@ async function doStart(): Promise<void> {
     err.status = 404;
     next(err);
   });
-
-  // error handlers
+  // no handler found for request (404)
   app.use(handlers.requestErrorHandler);
 
 };
