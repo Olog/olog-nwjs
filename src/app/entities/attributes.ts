@@ -1,5 +1,12 @@
 import ApplicationEntity = require('./app');
 
+/**
+ * Attributes Class:
+ * id,
+ * property_id,
+ * name,
+ * state = enum['Active', 'Inactive']
+ */
 class Attributes extends ApplicationEntity{
 
     private _property_id : any;
@@ -23,6 +30,13 @@ class Attributes extends ApplicationEntity{
             callback);
     }
 
+    public getByName(name : string, callback : any){
+        return this.conn.query(
+            "SELECT * FROM " + this.tableName + " WHERE name=?",
+            [name],
+            callback);
+    }
+
 
     public update(id : number, params : any, callback : any){
         return this.conn.query(
@@ -39,11 +53,12 @@ class Attributes extends ApplicationEntity{
     public insert(params : any, callback : any){
         return this.conn.query(
             "INSERT INTO "+ this.tableName +
-            "(name, state)" +
-            " values(?,?)",
+            "(name, state, property_id)" +
+            " values(?,?,?)",
             [
                 params.name,
-                params.state,
+                'Active',
+                params.property_id
             ],
             callback);
     }
@@ -51,8 +66,23 @@ class Attributes extends ApplicationEntity{
 
     public destroy(id : number, callback : any){
         return this.conn.query(
-            "DELETE FROM " + this.tableName + " id=?",
-            [id],
+            "UPDATE "+ this.tableName +
+            " set state=? WHERE id=?" +
+            [
+                'Inactive',
+                id,
+            ],
+            callback);
+    }
+
+    public destroyByName(name : string, callback : any){
+        return this.conn.query(
+            "UPDATE "+ this.tableName +
+            " set state=? WHERE name=?" +
+            [
+                'Inactive',
+                name,
+            ],
             callback);
     }
 }

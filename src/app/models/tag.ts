@@ -13,11 +13,11 @@ import LogsLogbooks = require('../entities/logs_logbooks');
  */
 class Tag extends ApplicationModel{
 
-    private _log_tags : any;
+    private _logTagsEntity : any;
 
     constructor(connection : any){
         super(new Tags('logbooks', connection, '1'), 'tags');
-        this._log_tags = new LogsLogbooks('logs_logbooks', connection);
+        this._logTagsEntity = new LogsLogbooks('logs_logbooks', connection);
     }
 
 
@@ -43,14 +43,13 @@ class Tag extends ApplicationModel{
 
     /**
      * Updates a tag with the given ID
-     * @param id
+     * @param tagName
      * @param params
      * @param callback
      * @returns {IQuery}
      */
-    public update(id : number, params : any, callback : any){
-        return this.mainEntity.update(id, params, callback);
-
+    public update(tagName : string, params : any, callback : any){
+        return this.mainEntity.updateByName(tagName, params, callback);
     }
 
     /**
@@ -71,7 +70,32 @@ class Tag extends ApplicationModel{
      * @returns {IQuery}
      */
     public setToLogs(tagName : string, params : any, callback : any){
-            //
+        //gets the tag/logbook from the tagname
+        let returnAll : any = [];
+        this.mainEntity.getByName(tagName, function(err : any, elem : any){
+            if(err){
+                return err;
+            }else{
+                for (let log of params.logs){
+                    //creates log_logbook entries for all the log ids in the data
+                    this._logTagsEntity.insert(
+                        {
+                            log_id : log.id,
+                            logbook_id : elem.logbook_id
+                        },
+                        function(err : any, elem : any){
+                            if(err){
+                                return err;
+                            }else{
+                                returnAll.push(elem);
+                            }
+                        }
+                    )
+                }
+
+            }
+        });
+        return callback(null, returnAll);
     }
 
     /**
@@ -81,30 +105,24 @@ class Tag extends ApplicationModel{
      * @returns {IQuery}
      */
     public destroy(tag_id : number, callback : any){
-        return this.mainEntity.destroybyLogbook(tag_id, callback);
+        return this.mainEntity.destroy(tag_id, callback);
     }
 
     /**
      * Deletes records of tags from a log
      * @param log_id
-     * @param tag_id
+     * @param tagName
      * @param callback
      */
-    public destroybyLog(log_id : any, tag_id : any, callback : any){
-        return this.mainEntity.destroybyLog(log_id, tag_id, callback);
+    public destroyByLog(log_id : any, tagName : string, callback : any){
+        return this._logTagsEntity.destroyByLog(log_id, tagName, callback);
     }
 
-    public checkValid(data : any){
-
+    public destroyByName( tagName : string, callback : any){
+        return this.mainEntity.destroybyName(tagName, callback);
     }
 
-    public validateUser(data : any){
 
-    }
-
-    public validateOwner(data : any){
-
-    }
 }
 
 export = Tag;

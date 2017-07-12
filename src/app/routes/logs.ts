@@ -2,8 +2,8 @@ import LogModel = require('../models/log');
 import ApplicationRouter = require('./app');
 
 class LogsRouter extends ApplicationRouter{
-    constructor(connection : any){
-        super("/logs/", new LogModel(connection));
+    constructor(connection : any, authentication : any){
+        super("/logs/", new LogModel(connection), authentication);
 
         let that = this;
 

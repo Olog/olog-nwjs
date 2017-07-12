@@ -1,5 +1,6 @@
 import ApplicationModel = require('./app');
 import Logbooks = require('../entities/logbooks');
+import LogsLogbooks = require('../entities/logs_logbooks');
 
 /**
  * Class for modifying logs in the database
@@ -12,8 +13,11 @@ import Logbooks = require('../entities/logbooks');
  */
 class Logbook extends ApplicationModel{
 
+    private _logLogbooksEntity : any;
+
     constructor(connection : any){
         super(new Logbooks('logbooks', connection, '0'), 'logbooks');
+        this._logLogbooksEntity = new LogsLogbooks('logs_logbooks', connection);
     }
 
 
@@ -29,25 +33,24 @@ class Logbook extends ApplicationModel{
 
     /**
      * Selects a logbook by ID
-     * @param id
+     * @param name
      * @param callback
      * @returns {IQuery}
      */
-    public getById(id : number, callback : any){
-        return this.mainEntity.getById(id,callback);
+    public get(name : number, callback : any){
+        return this.mainEntity.getByName(name,callback);
 
     }
 
     /**
      * Updates a logbook with the given ID
-     * @param id
+     * @param logbookName
      * @param params
      * @param callback
      * @returns {IQuery}
      */
-    public update(id : number, params : any, callback : any){
-        return this.mainEntity.update(id, params, callback);
-
+    public update(logbookName : string, params : any, callback : any){
+        return this.mainEntity.updateByName(logbookName, params, callback);
     }
 
     /**
@@ -60,6 +63,43 @@ class Logbook extends ApplicationModel{
         return this.mainEntity.insert(params, callback);
 
     }
+
+    /**
+     * Inserts a row into the logs_logbooks
+     * @param logbookName
+     * @param params
+     * @param callback
+     * @returns {IQuery}
+     */
+    public setToLogs(logbookName : string, params : any, callback : any){
+        //gets the tag/logbook from the logbookName
+        let returnAll : any = [];
+        this.mainEntity.getByName(logbookName, function(err : any, elem : any){
+            if(err){
+                return err;
+            }else{
+                for (let log of params.logs){
+                    //creates log_logbook entries for all the log ids in the data
+                    this._logLogbooksEntity.insert(
+                        {
+                            log_id : log.id,
+                            logbook_id : elem.logbook_id
+                        },
+                        function(err : any, elem : any){
+                            if(err){
+                                return err;
+                            }else{
+                                returnAll.push(elem);
+                            }
+                        }
+                    )
+                }
+
+            }
+        });
+        return callback(null, returnAll);
+    }
+
     /**
      * Deletes a row from the table
      * @param id
@@ -70,6 +110,21 @@ class Logbook extends ApplicationModel{
         return this.mainEntity.destroy(id, callback);
 
     }
+
+    /**
+     * Deletes records of tags from a log
+     * @param log_id
+     * @param logbookName
+     * @param callback
+     */
+    public destroyByLog(log_id : any, logbookName : string, callback : any){
+        return this._logLogbooksEntity.destroyByLog(log_id, logbookName, callback);
+    }
+
+    public destroyByName( logbookName : string, callback : any){
+        return this.mainEntity.destroybyName(logbookName, callback);
+    }
+
 
 }
 

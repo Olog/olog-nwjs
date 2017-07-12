@@ -10,7 +10,7 @@ let cas = {
 };
 
 cas.create = function (options : any) {
-    //cas.client = new CASClient(options);
+    cas.client =(new (<any> CASClient(options)));
     return cas.client;
 };
 

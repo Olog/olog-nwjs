@@ -1,6 +1,12 @@
 import ApplicationEntity = require('./app');
 import Attributes = require('./attributes');
 
+/**
+ * Properties Table
+ * id,
+ * name,
+ * state = enum['Active', 'Inactive']
+ */
 class Properties extends ApplicationEntity{
     private _Attributes : any = new Attributes('attributes', this.conn);
 
@@ -42,6 +48,23 @@ class Properties extends ApplicationEntity{
     }
 
     /**
+     * Selects a logbook by ID
+     * @param name
+     * @param callback
+     * @returns {IQuery}
+     */
+    public getByName(name : string, callback : any){
+        return this.conn.query(
+            "SELECT\
+        p.*,\
+            row_to_json(e.*) as attribute  \
+        FROM "+ this.tableName+" p WHERE name=? \
+        INNER JOIN "+ this._Attributes.tableName+" e USING(property_id)",
+            [name],
+            callback);
+    }
+
+    /**
      * Updates a tag with the given ID
      * @param id
      * @param params
@@ -49,7 +72,15 @@ class Properties extends ApplicationEntity{
      * @returns {IQuery}
      */
     public update(id : number, params : any, callback : any){
-
+        return this.conn.query(
+            "UPDATE "+ this.tableName +
+            " set name=?,state=? WHERE id=?" +
+            [
+                params.name,
+                (params.state || 'Active'),
+                id,
+            ],
+            callback);
     }
 
     /**
@@ -59,16 +90,32 @@ class Properties extends ApplicationEntity{
      * @returns {IQuery}
      */
     public insert(params : any, callback : any){
-
+        return this.conn.query(
+            "INSERT INTO "+ this.tableName +
+            "(name, state)" +
+            " values(?,?)",
+            [
+                params.name,
+                'Active'
+            ],
+            callback);
     }
+
     /**
      * Deletes a row from the table
-     * @param id
+     * @param name
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(id : number, callback : any){
-
+    public destroy(name : string, callback : any){
+        return this.conn.query(
+            "UPDATE "+ this.tableName +
+            " set state=? WHERE name=?" +
+            [
+                'Inactive',
+                name
+            ],
+            callback);
     };
 }
 

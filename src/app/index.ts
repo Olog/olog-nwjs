@@ -2,6 +2,7 @@
 import fs = require('fs');
 import path = require('path');
 
+import rc = require('rc');
 import bodyparser = require('body-parser');
 import express = require('express');
 import favicon = require('serve-favicon');
@@ -9,7 +10,28 @@ import morgan = require('morgan');
 import session = require('express-session');
 
 // load configuration start
-import authconfig = require('../../config/auth.js');
+//import authconfig = require('../../config/auth.js');
+let authconfig = {
+  'ad' : {
+    "url": "ldap://your/service",
+    "adminDn": "cn=svc_cf-user,ou=Service Accounts,dc=...",
+    "adminPassword": "password",
+    "searchBase": "ou=...,dc=...",
+    "searchFilter": "(&(objectClass=user)(sAMAccountName=_id)(company=FRIB))",
+    "nameFilter": "(&(objectClass=user)(displayName=_name)(company=FRIB))",
+    "groupSearchBase": "ou=...,dc=...",
+    "groupSearchFilter": "(&(objectClass=group)(sAMAccountName=_id))",
+    "objAttributes": ["sAMAccountName","displayName","company", "mail", "telephoneNumber", "mobile", "physicalDeliveryOfficeName"],
+    "memberAttributes": ["sAMAccountName","displayName","company", "mail", "telephoneNumber", "mobile", "physicalDeliveryOfficeName", "memberOf"],
+    "groupAttributes": ["sAMAccountName","displayName","mail"],
+    "rawAttributes": ["thumbnailPhoto"]
+  },
+  'auth' : {
+    "cas": "https://liud-dev.nscl.msu.edu/cas",
+    "service": "http://localhost:3003/",
+    "login_service": "http://localhost:3003/login"
+  }
+};
 
 //db connection
 import mysql = require('mysql');
@@ -27,14 +49,27 @@ import casLdapAuth = require('./shared/authentication/cas-ldap-auth');
 // error interface
 interface StatusError extends Error {
   status?: number;
-}
+};
+
+// package metadata
+interface Package {
+  name?: {};
+  version?: {};
+};
 
 // application configuration
-interface AppCfg {
-  port?: string;
-  addr?: string;
-  session_life?: number;
-  session_secret?: string;
+interface Config {
+  // these properties are provided by the 'rc' library
+  // and contain config file paths that have been read
+  // (see https://www.npmjs.com/package/rc)
+  config?: string;
+  configs?: string[];
+  app: {
+    port: {};
+    addr: {};
+    session_life: {};
+    session_secret: {};
+  };
 };
 
 // application singleton
@@ -61,17 +96,34 @@ function updateActivityStatus(): void {
   }
 };
 
-// read configuration file in JSON format
-async function readConfigFile(name: string): Promise<object> {
-  return new Promise(function (resolve, reject) {
-    fs.readFile(path.resolve(path.resolve(__dirname, '../config', name)), 'utf8', function (err, data) {
-      if (err) {
-        reject(err);
-        return;
+// read the application name and version
+async function readNameVersion(): Promise<[string | undefined, string | undefined]> {
+  // first look for application name and version in the environment
+  let name = process.env.NODE_APP_NAME;
+  let version = process.env.NODE_APP_VERSION;
+  // second look for application name and verison in packge.json
+  if (!name || !version) {
+    try {
+      let pkg: Package = JSON.parse(await new Promise<string>((resolve, reject) => {
+        fs.readFile(path.resolve(__dirname, '../package.json'), 'UTF-8', (err, data) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(data);
+        });
+      }));
+      if (!name && pkg && pkg.name) {
+        name = String(pkg.name);
       }
-      resolve(JSON.parse(data));
-    });
-  });
+      if (!version && pkg && pkg.version) {
+        version = String(pkg.version);
+      }
+    } catch (ierr) {
+      // ignore //
+    }
+  }
+  return [name, version];
 };
 
 // asynchronously start the application
@@ -93,6 +145,10 @@ async function start(): Promise<express.Application> {
   updateActivityStatus();
 
   app = express();
+
+  let [name, version] = await readNameVersion();
+  app.set('name', name);
+  app.set('version', version);
 
   app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (state !== 'started') {
@@ -131,12 +187,29 @@ async function start(): Promise<express.Application> {
 
 // asynchronously configure the application
 async function doStart(): Promise<void> {
-  let env = app.get('env');
+  let env: {} | undefined = app.get('env');
+  let name: {} | undefined = app.get('name');
 
-  let appCfg: AppCfg = await readConfigFile('app.json');
+  let cfg: Config = {
+    app: {
+      port: '3000',
+      addr: 'localhost',
+      session_life: 28800000,
+      session_secret: 'secret',
+    },
+  };
 
-  app.set('port', appCfg.port || '3000');
-  app.set('addr', appCfg.addr || 'localhost');
+  if (name && (typeof name === 'string')) {
+    rc(name, cfg);
+    if (cfg.configs) {
+      for (let file of cfg.configs) {
+        log('Load configuration: %s', file);
+      }
+    }
+  }
+
+  app.set('port', String(cfg.app.port));
+  app.set('addr', String(cfg.app.addr));
 
 
   // view engine configuration
@@ -172,9 +245,9 @@ async function doStart(): Promise<void> {
     store: new session.MemoryStore(),
     resave: false,
     saveUninitialized: false,
-    secret: appCfg.session_secret || 'secret',
+    secret: String(cfg.app.session_secret),
     cookie: {
-      maxAge: appCfg.session_life || 28800000,
+      maxAge: Number(cfg.app.session_life),
     },
   }));
 
@@ -193,10 +266,15 @@ async function doStart(): Promise<void> {
     console.log("Successfully connected to database");
   });
 
+  auth.ensureAuthenticated = casLdapAuth.ensureAuthenticated({
+    ldap: authconfig.ad,
+    auth: authconfig.auth
+  });
+
   app.use('/status', status.router);
 
   //set the routes for all the models and connection to the database
-  new IndexRouter(app, con);
+  new IndexRouter(app, con, auth);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {
@@ -207,11 +285,6 @@ async function doStart(): Promise<void> {
 
   // error handlers
   app.use(handlers.requestErrorHandler);
-
-  auth.ensureAuthenticated = casLdapAuth.ensureAuthenticated({
-    ldap: authconfig.ad,
-    auth: authconfig.auth
-  });
 
 };
 

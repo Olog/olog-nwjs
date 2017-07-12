@@ -40,6 +40,7 @@ function ensureAuthenticated(options : any) {
     let ad = options.ldap;
     let auth = options.auth;
     function doEnsureAuthentication(req : any, res : any, next : any) {
+
         let ticketUrl = url.parse(req.originalUrl, true);
         if (req.session && req.session.userid) {
             // logged in already

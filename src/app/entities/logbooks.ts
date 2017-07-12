@@ -66,12 +66,13 @@ class Logbooks extends ApplicationEntity{
     public update(id : number, params : any, callback : any){
         return this.conn.query(
             "UPDATE "+ this.tableName +
-            " set name=?, owner=?, state=? WHERE id=?" +
+            " set name=?, owner=?, state=? WHERE id=? AND is_tag=?" +
             [
                 params.name,
                 params.owner,
-                params.state,
-                id
+                (params.state || 'Active'),
+                id,
+                this._is_tag
             ],
             callback);
     }
@@ -85,12 +86,13 @@ class Logbooks extends ApplicationEntity{
     public updateByName(tagName : string, params : any, callback : any){
         return this.conn.query(
             "UPDATE "+ this.tableName +
-            " set name=?, owner=?, state=? WHERE name=?" +
+            " set name=?, owner=?, state=? WHERE name=? AND is_tag=?" +
             [
                 params.name,
                 params.owner,
-                params.state,
-                tagName
+                (params.state || 'Active'),
+                tagName,
+                this._is_tag
             ],
             callback);
     }
@@ -109,7 +111,7 @@ class Logbooks extends ApplicationEntity{
             [
                 params.name,
                 params.owner,
-                params.state,
+                (params.state || 'Active'),
                 this._is_tag
             ],
             callback);
@@ -136,10 +138,14 @@ class Logbooks extends ApplicationEntity{
      */
     public destroybyName(tagname : string, callback : any){
         return this.conn.query(
-            "DELETE FROM " + this.tableName + " WHERE is_tag=" + this._is_tag + " AND name=?",
-            [tagname],
+            "UPDATE " + this.tableName + " SET state=? WHERE is_tag=" + this._is_tag + " AND name=?",
+            [
+                'Inactive',
+                tagname
+            ],
             callback);
     }
+
 }
 
 export = Logbooks;

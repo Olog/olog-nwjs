@@ -14,8 +14,7 @@ npm-debug.log
 # Ignore build directory
 /app/
 
-# Ignore configuration files
-/config/app.json
-
 # Ignore JetBrains IDE config folder content
 .idea
+
+/config/

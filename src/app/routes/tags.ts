@@ -3,8 +3,8 @@ import ApplicationRouter = require('./app');
 
 class TagsRouter extends ApplicationRouter {
 
-    constructor(connection : any) {
-        super("/tags/", new TagModel(connection));
+    constructor(connection : any, authentication : any) {
+        super("/tags/", new TagModel(connection), authentication);
 
         let that = this;
 
@@ -47,7 +47,13 @@ class TagsRouter extends ApplicationRouter {
          *
          * POST method for creating a tag.
          *
-         * @param data
+         * @param data :
+         * {
+         *  id : integer,
+         *  name : string,
+         *  owner : string,
+         *  state : string
+         * }
          */
         that.router.post('/', function(req : any, res : any){
             that.model.insert( req.body, function(err : any, elem : any){
@@ -68,6 +74,13 @@ class TagsRouter extends ApplicationRouter {
          *
          * @param tagName
          * @param data
+         * {
+         *  logs: [
+         *          {
+         *              id: integer
+         *          }
+         *      ]
+         * }
          */
         that.router.post('/:tagName', function(req : any, res : any){
             that.model.setToLogs(req.params.tagName, req.body, function(err : any, elem : any){
@@ -87,6 +100,11 @@ class TagsRouter extends ApplicationRouter {
          *
          * @param tagName
          * @param data
+         * {
+         *      name : string,
+         *      owner : string,
+         *      state : string
+         * }
          */
         that.router.put('/:tagName', function(req : any, res : any){
             that.model.update(req.params.tagName, req.body, function(err : any, elem : any){
@@ -102,14 +120,14 @@ class TagsRouter extends ApplicationRouter {
         /**
          * PUT /tags/:tagName/:logId
          *
-         * PUT method for updating the given log with logId for the tag
+         * PUT method for updating the given log with tagName for the tag
          *
          * @param tagName
          * @param logId
          * @param data (ignored)
          */
-        that.router.post('/:tagName', function(req : any, res : any){
-            that.model.update( req.body, function(err : any, elem : any){
+        that.router.post('/:tagName/:logId', function(req : any, res : any){
+            that.model.setToLogs( req.params.tagName, {logs: [{id: req.params.logId}]}, function(err : any, elem : any){
                 res.set('Content-Type', 'text/json');
                 if(err){
                     res.send(that.model.setJSON(err));
@@ -147,7 +165,7 @@ class TagsRouter extends ApplicationRouter {
          * @param logId
          */
         that.router.delete('/:tagName/:logId', function(req : any, res : any){
-            that.model.destroybyLog(req.params.tagName, function(err : any, elem : any){
+            that.model.destroyByLog(req.params.logId, req.params.tagName, function(err : any, elem : any){
                 res.set('Content-Type', 'text/json');
                 if(err){
                     res.send(that.model.setJSON(err));

@@ -92,27 +92,22 @@ class LogsLogbooks extends ApplicationEntity {
     /**
      * Deletes a logbooks from a given log
      * @param log_id Log id
-     * @param logbook_id
+     * @param logbookName
      * @param callback
      * @returns {IQuery}
      */
-    public destroybyLog(log_id: any, logbook_id :  any, callback: any) {
+    public destroyByLog(log_id: any, logbookName : string, callback: any) {
         return this.conn.query(
-            "DELETE FROM " + this.tableName + " WHERE log_id=? AND logbook_id=?",
+            "DELETE FROM " + this.tableName + " WHERE log_id=? " +
+            "AND logbook_id IN " +
+            "(SELECT id from logbooks where name=?)",
             [
                 log_id,
-                logbook_id
+                logbookName
             ],
             callback);
     }
 
-    public destroybyLogbook(logbook_id : any, callback: any){
-        return this.conn.query(
-            "DELETE FROM " + this.tableName + " WHERE logbook_id=?",
-            [logbook_id],
-            callback);
-
-    }
 
 }
 
