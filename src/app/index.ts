@@ -10,6 +10,7 @@ import morgan = require('morgan');
 import session = require('express-session');
 
 // load configuration start
+//////////////////////////////////////////////////////////////
 //import authconfig = require('../../config/auth.js');
 let authconfig = {
   'ad' : {
@@ -33,9 +34,26 @@ let authconfig = {
   }
 };
 
+//configs for git
+
+let gitConfigs = {
+  repo_conf : {
+    remote_name : 'origin',
+    local_path : 'C:/Users/mujtabad/ologDir',
+    url : 'https://mujtabad@gitlab.msu.edu/mujtabad/restlogdir.git'
+  },
+  auth : {
+    username : 'dmujt',
+    email : 'mujtdena@gmail.com',
+    password : 'password_goes_here'
+  }
+
+};
+/////////////////////////////////////////////////////////
+
 //db connection
 import mysql = require('mysql');
-
+import GitStor = require('../lib/storage/main')
 import handlers = require('./shared/handlers');
 import status = require('./shared/status');
 
@@ -253,6 +271,8 @@ async function doStart(): Promise<void> {
 
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use(express.static(path.resolve(__dirname, '../bower_components')));
+
+  let git = new GitStor(gitConfigs);
 
   let con = mysql.createConnection({
     host: "localhost",

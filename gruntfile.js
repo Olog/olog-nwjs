@@ -4,7 +4,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         ts: {
             app: {
-                outDir: './app',
+                outDir: "./",
                 tsconfig: 'src/app/tsconfig.json'
             },
             apptest: {
@@ -34,4 +34,5 @@ module.exports = function(grunt) {
     grunt.registerTask("default", [
         "ts"
     ]);
+
 }

@@ -19,7 +19,8 @@
     "morgan": "^1.7.0",
     "pug": "^2.0.0-beta11",
     "rc": "^1.2.1",
-    "serve-favicon": "^2.3.0"
+    "serve-favicon": "^2.3.0",
+    "nodegit" : "0.19.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",
@@ -46,6 +47,7 @@
     "mocha": "^3.4.2",
     "supertest": "^3.0.0",
     "tslint": "^4.5.0",
-    "typescript": "^2.4.0"
+    "typescript": "^2.4.0",
+    "@types/nodegit" : "0.18.0"
   }
 }
