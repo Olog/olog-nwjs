@@ -1,14 +1,10 @@
 import NG = require("nodegit");
 import fs = require("fs");
-import W = require('./entity');
 
 /**
  * Class for writing/reading data from the git repo
  */
 class StorageDir {
-
-    //performs write/read operations from the git repo
-    private _writer : any = new W;
 
     //name of folder containing the repository remote
     private _folderName : string = 'ologDir';
@@ -24,6 +20,11 @@ class StorageDir {
     //Remote object
     private _remote : any;
 
+    private _user : any;
+
+    private _index : any;
+
+    private _oid : any;
     /**
      * Constructor
      * @param configs Configurations imported on application start
@@ -42,6 +43,14 @@ class StorageDir {
         this.initialize(function(event : any){
             console.log(event);
         });
+
+        this.fetchAll();
+
+        //get index for add/commits
+        this._repo.refreshIndex().then(function(indexResult : any){
+            this._index = indexResult
+        });
+
     }
 
     /**
@@ -51,11 +60,8 @@ class StorageDir {
      * @param callback
      * @returns {any}
      */
-    private sign(author_email : any, author_name : any, callback : any){
-        return callback(
-            NG.Signature.now(author_name, author_email),
-            NG.Signature.now(author_name, author_email)
-        );
+    private sign(author_email : any, author_name : any){
+        return NG.Signature.now(author_name, author_email);
     }
 
     /**
@@ -64,7 +70,6 @@ class StorageDir {
      */
     private initialize(callback : any){
         NG.Repository.init(this._pathName, false).then(function( repository : any) {
-
 
             console.log("Repo init : "+repository);
 
@@ -79,35 +84,101 @@ class StorageDir {
     }
 
     /**
-     * Adds files to git a remote
-     */
-    public add(filepath : string, elems : any){
-
-    }
-
-    /**
      * commit files to a remote
      */
-    public commit(author: any, eventTime : string, tags : any){
+    public commit(action : any, msg : string, author: any, eventTime : string, tags : any){
+        //get index for add/commits
+        this._repo.refreshIndex()
+            .then(function(indexResult : any){
+                this._index = indexResult;
+            })
+            .then(function(){
+                return action;
+            })
+            .then(function(){
+            //write the files to the index
+            return this._index.write();
+            })
+            .then(function(){
+                return this._index.writeTree();
+            })
+            .then(function(oidResult : any){
+                this._oid = oidResult;
+                return NG.Reference.nameToId(this._repo, "HEAD");
+            })
+            .then(function(head : any){
+                return this._repo.getCommit(head);
+                //return the comit to push to master
+            })
+            .then(function(parent : any){
+                let commit_author = this.sign(author.email, author.name);
 
+                return this._repo.createCommit(
+                    "HEAD",
+                    commit_author,
+                    commit_author,
+                    msg,
+                    this._oid,
+                    [parent]
+                );
+            })
+            .done(function(commitId : any){
+                //commit finished
+                console.log("New Commit:", commitId);
+
+                return commitId;
+            })
     }
 
     /**
-     * Remove file from git
+     * Pushes any changes that have been committed to the remote repository
      */
-    public remove(){
+    public pushToRepo(){
+        return this._remote.push(
+            ["refs/heads/master:refs/heads/master"],
+            {
+                callbacks: {
+                    credentials: function(url : any, userName : any, password:any){
+                        this.auth(userName, password);
+                    }
+                }
+            }
+        )
+    }
 
+    /**
+     * Remove file from the repository
+     * @param filepath The path to the file to remove
+     * @returns {number}
+     */
+    public remove(filepath : string){
+        return this._index.removeByPath(filepath);
+    }
+
+    /**
+     * Adds the changes made in the repository
+     * @param filepath If only adding a single file
+     * @returns {number}
+     */
+    public add(filepath : string){
+        return this._index.addByPath(filepath || this._pathName);
     }
 
     /**
      * Handle authentication through git/gitlab
      */
-    public authenticate(){
-
+    public static auth(username : any, pass: any){
+        return NG.Cred.userpassPlaintextNew(username, pass);
     }
 
     public fetchAll(){
-        return NG.Fetch.initOptions(opts, 0);
+        return this._repo.fetch("origin", {
+            callbacks: {
+                credentials: function(url : any, userName : any, password:any) {
+                    this.auth(userName, password);
+                }
+            }
+        });
     }
 
 }
