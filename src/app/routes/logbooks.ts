@@ -14,7 +14,7 @@ class LogbooksRouter extends ApplicationRouter{
          *
          *  GET method to return a list of all the logbooks present in the table
          */
-        that.router.get('/', that.auth(), function(req : any, res : any) {
+        that.router.get('/', function(req : any, res : any) {
             that.model.all( null, function(err : any, elem : any){
                 res.set('Content-Type', 'text/json');
                 if(err){

@@ -9,60 +9,26 @@ import favicon = require('serve-favicon');
 import morgan = require('morgan');
 import session = require('express-session');
 
+let configurations : any = null;
 // load configuration start
 //////////////////////////////////////////////////////////////
-//import authconfig = require('../../config/auth.js');
-let authconfig = {
-  'ad' : {
-    "url": "ldap://your/service",
-    "adminDn": "cn=svc_cf-user,ou=Service Accounts,dc=...",
-    "adminPassword": "password",
-    "searchBase": "ou=...,dc=...",
-    "searchFilter": "(&(objectClass=user)(sAMAccountName=_id)(company=FRIB))",
-    "nameFilter": "(&(objectClass=user)(displayName=_name)(company=FRIB))",
-    "groupSearchBase": "ou=...,dc=...",
-    "groupSearchFilter": "(&(objectClass=group)(sAMAccountName=_id))",
-    "objAttributes": ["sAMAccountName","displayName","company", "mail", "telephoneNumber", "mobile", "physicalDeliveryOfficeName"],
-    "memberAttributes": ["sAMAccountName","displayName","company", "mail", "telephoneNumber", "mobile", "physicalDeliveryOfficeName", "memberOf"],
-    "groupAttributes": ["sAMAccountName","displayName","mail"],
-    "rawAttributes": ["thumbnailPhoto"]
-  },
-  'auth' : {
-    "cas": "https://liud-dev.nscl.msu.edu/cas",
-    "service": "http://localhost:3003/",
-    "login_service": "http://localhost:3003/login"
-  }
-};
 
-//configs for git
-
-let gitConfigs = {
-  repo_conf : {
-    remote_name : 'origin',
-    local_path : 'C:/Users/mujtabad/ologDir',
-    url : 'https://mujtabad@gitlab.msu.edu/mujtabad/restlogdir.git'
-  },
-  auth : {
-    username : 'dmujt',
-    email : 'mujtdena@gmail.com',
-    password : 'password_goes_here'
+fs.readFile('./config/configs.json', function (err, data) {
+  if (err) {
+    return console.error(err);
   }
 
-};
+  configurations =  JSON.parse(data.toString());
+});
 /////////////////////////////////////////////////////////
 
 //db connection
-import mysql = require('mysql');
 import GitStor = require('../lib/storage/main')
+import Auth = require('../lib/authentication/auth')
 import handlers = require('./shared/handlers');
 import status = require('./shared/status');
 
 import IndexRouter = require('./routes/indexrouter');
-
-// authentication start
-import auth = require('./shared/authentication/auth');
-import casLdapAuth = require('./shared/authentication/cas-ldap-auth');
-
 
 // error interface
 interface StatusError extends Error {
@@ -182,6 +148,7 @@ async function start(): Promise<express.Application> {
     });
     activeCount += 1;
     updateActivityStatus();
+
     next();
   });
 
@@ -272,29 +239,14 @@ async function doStart(): Promise<void> {
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use(express.static(path.resolve(__dirname, '../bower_components')));
 
-  let git = new GitStor(gitConfigs);
-
-  let con = mysql.createConnection({
-    host: "localhost",
-    user: "admin",
-    password: "",
-    database: "olog"
-  });
-
-  con.connect(function(err) {
-    if (err) throw err;
-    console.log("Successfully connected to database");
-  });
-
-  auth.ensureAuthenticated = casLdapAuth.ensureAuthenticated({
-    ldap: authconfig.ad,
-    auth: authconfig.auth
-  });
+  let git = new GitStor(configurations.gitConfigs);
 
   app.use('/status', status.router);
 
+  let auth = new Auth(configurations.authconfig);
+
   //set the routes for all the models and connection to the database
-  new IndexRouter(app, con, auth);
+  new IndexRouter(app, git, auth);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {

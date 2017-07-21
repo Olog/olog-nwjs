@@ -1,4 +1,5 @@
 import fs = require('fs');
+import mkdirp = require('mkdirp');
 
 /**
  * Handles opening/saving JSON files to and from the git repository
@@ -11,7 +12,7 @@ class Writer{
     /**
      * constructor
      */
-    constructor(){ }
+    constructor(){}
 
     /**
      * Removes a file from the given path
@@ -25,10 +26,15 @@ class Writer{
     /**
      * Saves the JSON data to a file
      * @param data JSON data to write to the file.
-     * @param filename Name of the file(no extensions)
+     * @param filepath String containing path to hold the file.
+     * @param filename Name fo the file (no extensions)
      */
-    public writeJSON(data : any, filename : any){
+    public writeJSON(data : any, filepath : string, filename : string){
+        mkdirp(filepath, function (err) {
+            if(err) return false;
+        });
         fs.writeFile(filename + '.json', JSON.stringify(data, null, this._filespaceCount));
+        return true;
     }
 
     /**
@@ -42,8 +48,38 @@ class Writer{
                 return console.error(err);
             }
 
-            return data;
+            return JSON.parse(data.toString());
         });
+    }
+
+    /**
+     * Reads the directory given, returns all files or folders in directory
+     * @param dirPath
+     * @param callback
+     * @param folders If result should give folder names or file names
+     */
+    public getDirFiles(dirPath : string, folders : boolean = true, callback : any){
+        if (folders === undefined){
+            folders = true;
+        }
+
+        fs.readdir(dirPath, function(err : any, files : any) {
+            let res : any = [];
+            files.forEach(function(file : any){
+                let statType : any = fs.statSync(dirPath + "/" + file);
+                    //determine if folder or file
+                    if(statType.isDirectory()){
+                        //folder
+                        res.push(file);
+                    }else{
+                        //file
+                        if(!folders)
+                            res.push(file);
+                    }
+            });
+            callback(res);
+        });
+
     }
 
 }

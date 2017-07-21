@@ -16,15 +16,6 @@ import Logs = require('../entities/logs');
  */
 class Log extends ApplicationModel{
 
-    private _logAttributesEntity : any;
-
-    private _logBooksEntity : any;
-
-    private _entriesEntity : any;
-
-    private _attributesEntity : any;
-
-
     constructor(connection : any){
         super(new Logs('logs', connection), 'logs');
     }

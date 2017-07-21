@@ -25,6 +25,27 @@ class StorageDir {
     private _index : any;
 
     private _oid : any;
+
+    get folderName(): string {
+        return this._folderName;
+    }
+
+    get pathName(): string {
+        return this._pathName;
+    }
+
+    get remoteURL(): string {
+        return this._remoteURL;
+    }
+
+    get remoteName(): string {
+        return this._remoteName;
+    }
+
+    get user(): any {
+        return this._user;
+    }
+
     /**
      * Constructor
      * @param configs Configurations imported on application start
@@ -41,27 +62,28 @@ class StorageDir {
 
         //initialize a repository if it does not exist
         this.initialize(function(event : any){
+
             console.log(event);
+
+            this.fetchAll();
+
+            //get index for add/commits
+            this._repo.refreshIndex().then(function(indexResult : any){
+                this._index = indexResult
+            });
         });
-
-        this.fetchAll();
-
-        //get index for add/commits
-        this._repo.refreshIndex().then(function(indexResult : any){
-            this._index = indexResult
-        });
-
     }
 
     /**
      * Returns the author and commiter
      * @param author_email
      * @param author_name
-     * @param callback
+     * @param time
+     * @param offset
      * @returns {any}
      */
-    private sign(author_email : any, author_name : any){
-        return NG.Signature.now(author_name, author_email);
+    private sign(author_email : any, author_name : any, time : any, offset : any){
+        return NG.Signature.create(author_name, author_email, time, offset);
     }
 
     /**
@@ -84,9 +106,14 @@ class StorageDir {
     }
 
     /**
-     * commit files to a remote
+     *
+     * @param data Data for specific git events like commit/ author timestamps
+     * @param action Action for modifying the files on the index
+     * @param msg Commit Message to Print
+     * @param person Author name and email for this commit
+     * @param tags
      */
-    public commit(action : any, msg : string, author: any, eventTime : string, tags : any){
+    public commit(data : any,action : any, msg : string, person: any, tags : any){
         //get index for add/commits
         this._repo.refreshIndex()
             .then(function(indexResult : any){
@@ -108,15 +135,16 @@ class StorageDir {
             })
             .then(function(head : any){
                 return this._repo.getCommit(head);
-                //return the comit to push to master
+                //return the commit to push to master
             })
             .then(function(parent : any){
-                let commit_author = this.sign(author.email, author.name);
+                let committer = this.sign(person.email, person.name, data.auditTime, -300);
+                let author = this.sign(person.email, person.name, data.eventTime, -300);
 
                 return this._repo.createCommit(
                     "HEAD",
-                    commit_author,
-                    commit_author,
+                    author,
+                    committer,
                     msg,
                     this._oid,
                     [parent]

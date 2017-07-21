@@ -45,7 +45,7 @@ class Property extends ApplicationModel{
         return this.mainEntity.getByName(name, callback);
     }
 
-    public update(id: number, params : any, callback : any){
+    public newAttr(propName : string, id: number, params : any, callback : any){
 
     }
 

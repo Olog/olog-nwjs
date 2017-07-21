@@ -92,7 +92,14 @@ class PropertiesRouter extends ApplicationRouter{
          * }
          */
         that.router.put('/:propName', function(req : any, res : any){
-
+            that.model.insert(req.params.propName, req.params.body, function(err : any, elem : any){
+                res.set('Content-Type', 'text/json');
+                if(err){
+                    res.send(that.model.setJSON(elem));
+                }else{
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
         /**
@@ -105,7 +112,14 @@ class PropertiesRouter extends ApplicationRouter{
          * @param data
          */
         that.router.put('/:propName/:logId', function(req : any, res : any){
-
+            that.model.newAttr(req.params.propName, req.params.logId,  req.params.body, function(err : any, elem : any){
+                res.set('Content-Type', 'text/json');
+                if(err){
+                    res.send(that.model.setJSON(elem));
+                }else{
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
         /**

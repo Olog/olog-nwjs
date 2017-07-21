@@ -21,7 +21,7 @@ class Attributes extends ApplicationEntity{
             "SELECT * FROM " + this.tableName + " WHERE property_id=" + this._property_id,
             callback);
     }
-
+    
 
     public getById(id : number, callback : any){
         return this.conn.query(

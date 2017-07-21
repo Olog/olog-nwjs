@@ -1,5 +1,4 @@
 import express = require('express');
-import authenticate = require('../shared/authentication/auth');
 
 /**
  * Base class for declaring model routers and paths
@@ -9,7 +8,7 @@ class ApplicationRouter{
     private _routesPath : string = "/";
     private _model : any = null;
     private _router : any = express.Router();
-    private _auth : any = authenticate;
+    private _auth : any;
 
     constructor(path : string, model: any, authentication : any){
         this._model = model;
@@ -33,8 +32,8 @@ class ApplicationRouter{
         this._router = value;
     }
 
-    public auth(){
-        return this._auth.ensureAuthenticated;
+    public auth(header, res){
+        return this._auth.ensureAuthenticated(res,header);
     }
 }
 

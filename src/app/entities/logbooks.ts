@@ -25,9 +25,9 @@ class Logbooks extends ApplicationEntity{
      * @returns {IQuery}
      */
     public all(page : any, callback : any){
-        return this.conn.query(
-            "SELECT id,name,owner,state FROM " + this.tableName + " WHERE is_tag=" + this._is_tag,
-            callback);
+        this.fileManager.getDirFiles(this.conn.pathName, true,function(res : any){
+            return callback(null, res);
+        });
     }
 
     /**

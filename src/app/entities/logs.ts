@@ -27,6 +27,17 @@ class Logs extends ApplicationEntity{
         super(tablename, connection);
     }
 
+    public serialize(data : any){
+        return {
+            'log' : {
+                'level' : data.level,
+                'state' : data.state,
+                'description' : data.description,
+            }
+        };
+
+    }
+
     /**
      * Search for the entry in the database
      * @param page
@@ -57,21 +68,20 @@ class Logs extends ApplicationEntity{
      * @returns {IQuery|any}
      */
     public insert(params : any, callback : any){
-        return this.conn.query(
-            "INSERT INTO "+ this.tableName +
-            "(owner, description, modified, source, state, level, entry_id, version)" +
-            " values(?,?,?,?,?,?)",
-            [
-                params.modified,
-                params.source,
-                params.owner,
-                params.description,
-                params.state,
-                params.level,
-                params.entry_id,
-                params.version
-            ],
-            callback);
+        let temp : any = this.serialize(params);
+
+        let date = this.dateCreated(params.createdAt);
+        //filepath to insert by: /logs/year
+        this.fileManager.writeFile(temp,
+            this.filePath + '/logs/' +
+            date.year   +   '/' +
+            date.month  +   '/' +
+            date.day,
+            date.timestamp
+        );
+
+        //commit the
+        return temp;
     }
 
 
