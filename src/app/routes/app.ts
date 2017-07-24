@@ -3,14 +3,14 @@ import express = require('express');
 /**
  * Base class for declaring model routers and paths
  */
-class ApplicationRouter{
+class ApplicationRouter {
 
-    private _routesPath : string = "/";
+    private _routesPath : string = '/';
     private _model : any = null;
     private _router : any = express.Router();
     private _auth : any;
 
-    constructor(path : string, model: any, authentication : any){
+    constructor(path: string, model: any, authentication: any) {
         this._model = model;
         this._routesPath = path;
         this._auth = authentication;
@@ -32,8 +32,8 @@ class ApplicationRouter{
         this._router = value;
     }
 
-    public auth(header, res){
-        return this._auth.ensureAuthenticated(res,header);
+    public auth(header: any, res: any) {
+        return this._auth.ensureAuthenticated(res, header);
     }
 }
 

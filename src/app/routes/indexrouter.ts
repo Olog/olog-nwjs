@@ -3,9 +3,9 @@ import LogsRouter = require('./logs');
 import PropertiesRouter = require('./properties');
 import TagsRouter = require('./tags');
 
-class IndexRouter{
+class IndexRouter {
 
-    constructor(app : any, databaseConnection : any, authentication : any){
+    constructor(app: any, databaseConnection: any, authentication: any) {
 
         let logbooks = new LogbooksRouter(databaseConnection, authentication);
         app.use(logbooks.path, logbooks.router);

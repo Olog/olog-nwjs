@@ -69,7 +69,7 @@ class StorageDir {
 
             //get index for add/commits
             this._repo.refreshIndex().then(function(indexResult : any){
-                this._index = indexResult
+                this._index = indexResult;
             });
         });
     }

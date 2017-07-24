@@ -3,8 +3,8 @@ import ApplicationRouter = require('./app');
 
 class TagsRouter extends ApplicationRouter {
 
-    constructor(connection : any, authentication : any) {
-        super("/tags/", new TagModel(connection), authentication);
+    constructor(connection: any, authentication: any) {
+        super('/tags/', new TagModel(connection), authentication);
 
         let that = this;
 
@@ -13,12 +13,12 @@ class TagsRouter extends ApplicationRouter {
          *
          *  GET method to return a list of all the tags present in the table
          */
-        that.router.get('/', function(req : any, res : any) {
-            that.model.all( null, function(err : any, elem : any){
+        that.router.get('/', function(req: any, res: any) {
+            that.model.all( null, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -31,12 +31,12 @@ class TagsRouter extends ApplicationRouter {
          *
          * @param tagName
          */
-        that.router.get('/:tagName', function(req : any, res : any){
-            that.model.get(req.params.tagName, function(err : any, elem : any){
+        that.router.get('/:tagName', function(req: any, res: any){
+            that.model.get(req.params.tagName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -55,12 +55,12 @@ class TagsRouter extends ApplicationRouter {
          *  state : string
          * }
          */
-        that.router.post('/', function(req : any, res : any){
-            that.model.insert( req.body, function(err : any, elem : any){
+        that.router.post('/', function(req: any, res: any){
+            that.model.insert( req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -82,12 +82,12 @@ class TagsRouter extends ApplicationRouter {
          *      ]
          * }
          */
-        that.router.post('/:tagName', function(req : any, res : any){
-            that.model.setToLogs(req.params.tagName, req.body, function(err : any, elem : any){
+        that.router.post('/:tagName', function(req: any, res: any){
+            that.model.setToLogs(req.params.tagName, req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -106,12 +106,12 @@ class TagsRouter extends ApplicationRouter {
          *      state : string
          * }
          */
-        that.router.put('/:tagName', function(req : any, res : any){
-            that.model.update(req.params.tagName, req.body, function(err : any, elem : any){
+        that.router.put('/:tagName', function(req: any, res: any){
+            that.model.update(req.params.tagName, req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -126,12 +126,12 @@ class TagsRouter extends ApplicationRouter {
          * @param logId
          * @param data (ignored)
          */
-        that.router.post('/:tagName/:logId', function(req : any, res : any){
-            that.model.setToLogs( req.params.tagName, {logs: [{id: req.params.logId}]}, function(err : any, elem : any){
+        that.router.post('/:tagName/:logId', function(req: any, res: any){
+            that.model.setToLogs( req.params.tagName, {logs: [{id: req.params.logId}]}, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -145,12 +145,12 @@ class TagsRouter extends ApplicationRouter {
          *
          * @param tagName
          */
-        that.router.delete('/:tagName', function(req : any, res : any){
-            that.model.destroybyName(req.params.tagName, function(err : any, elem : any){
+        that.router.delete('/:tagName', function(req: any, res: any){
+            that.model.destroybyName(req.params.tagName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -164,12 +164,12 @@ class TagsRouter extends ApplicationRouter {
          * @param tagName
          * @param logId
          */
-        that.router.delete('/:tagName/:logId', function(req : any, res : any){
-            that.model.destroyByLog(req.params.logId, req.params.tagName, function(err : any, elem : any){
+        that.router.delete('/:tagName/:logId', function(req: any, res: any){
+            that.model.destroyByLog(req.params.logId, req.params.tagName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });

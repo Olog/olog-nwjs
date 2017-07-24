@@ -1,10 +1,10 @@
 import LogbookModel = require('../models/logbook');
 import ApplicationRouter = require('./app');
 
-class LogbooksRouter extends ApplicationRouter{
+class LogbooksRouter extends ApplicationRouter {
 
-    constructor(connection : any, authentication : any){
-        super("/logbooks/", new LogbookModel(connection), authentication);
+    constructor(connection: any, authentication: any) {
+        super('/logbooks/', new LogbookModel(connection), authentication);
 
         let that = this;
 
@@ -14,12 +14,12 @@ class LogbooksRouter extends ApplicationRouter{
          *
          *  GET method to return a list of all the logbooks present in the table
          */
-        that.router.get('/', function(req : any, res : any) {
-            that.model.all( null, function(err : any, elem : any){
+        that.router.get('/', function(req: any, res: any) {
+            that.model.all( null, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -33,12 +33,12 @@ class LogbooksRouter extends ApplicationRouter{
          *
          * @param logbookName
          */
-        that.router.get('/:logbookName', that.auth(), function(req : any, res : any){
-            that.model.get(req.params.logbookName, function(err : any, elem : any){
+        that.router.get('/:logbookName', function(req: any, res: any){
+            that.model.get(req.params.logbookName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -57,12 +57,12 @@ class LogbooksRouter extends ApplicationRouter{
          *  state : string
          * }
          */
-        that.router.post('/',  that.auth(),function(req : any, res : any){
-            that.model.insert( req.body, function(err : any, elem : any){
+        that.router.post('/', function(req: any, res: any){
+            that.model.insert( req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -84,12 +84,12 @@ class LogbooksRouter extends ApplicationRouter{
          *      ]
          * }
          */
-        that.router.post('/:logbookName',  that.auth(),function(req : any, res : any){
-            that.model.setToLogs(req.params.logbookName, req.body, function(err : any, elem : any){
+        that.router.post('/:logbookName', function(req: any, res: any){
+            that.model.setToLogs(req.params.logbookName, req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -110,12 +110,12 @@ class LogbooksRouter extends ApplicationRouter{
          *      state : string
          * }
          */
-        that.router.put('/:logbookName', that.auth(), function(req : any, res : any){
-            that.model.update(req.params.logbookName, req.body, function(err : any, elem : any){
+        that.router.put('/:logbookName', function(req: any, res: any){
+            that.model.update(req.params.logbookName, req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -130,12 +130,13 @@ class LogbooksRouter extends ApplicationRouter{
          * @param logId
          * @param data (ignored)
          */
-        that.router.post('/:logbookName/:logId',  that.auth(),function(req : any, res : any){
-            that.model.setToLogs( req.params.logbookName, {logs: [{id: req.params.logId}]}, function(err : any, elem : any){
+        that.router.post('/:logbookName/:logId', function(req: any, res: any) {
+            that.model.setToLogs( req.params.logbookName,
+                {logs: [{id: req.params.logId}]}, function(err: any, elem: any) {
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -149,12 +150,12 @@ class LogbooksRouter extends ApplicationRouter{
          *
          * @param logbookName
          */
-        that.router.delete('/:logbookName',  that.auth(),function(req : any, res : any){
-            that.model.destroyByName(req.params.logbookName, function(err : any, elem : any){
+        that.router.delete('/:logbookName', function(req: any, res: any){
+            that.model.destroyByName(req.params.logbookName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });
@@ -168,12 +169,12 @@ class LogbooksRouter extends ApplicationRouter{
          * @param logbookName
          * @param logId
          */
-        that.router.delete('/:logbookName/:logId',  that.auth(),function(req : any, res : any){
-            that.model.destroyByLog(req.params.logId, req.params.logbookName, function(err : any, elem : any){
+        that.router.delete('/:logbookName/:logId', function(req: any, res: any) {
+            that.model.destroyByLog(req.params.logId, req.params.logbookName, function(err: any, elem: any) {
                 res.set('Content-Type', 'text/json');
-                if(err){
+                if (err) {
                     res.send(that.model.setJSON(err));
-                }else{
+                }else {
                     res.send(that.model.setJSON(elem));
                 }
             });

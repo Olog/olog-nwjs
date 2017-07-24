@@ -23,8 +23,8 @@ fs.readFile('./config/configs.json', function (err, data) {
 /////////////////////////////////////////////////////////
 
 //db connection
-import GitStor = require('../lib/storage/main')
-import Auth = require('../lib/authentication/auth')
+import GitStor = require('../lib/storage/main');
+import Auth = require('../lib/authentication/auth');
 import handlers = require('./shared/handlers');
 import status = require('./shared/status');
 

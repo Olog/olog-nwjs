@@ -4,20 +4,11 @@ import LogsLogbooks = require('../entities/logs_logbooks');
 
 /**
  * Class for modifying logs in the database
- * Logbook Attributes:
- *      id,
- *      name,
- *      is_tag=0,
- *      owner,
- *      state
  */
 class Logbook extends ApplicationModel{
 
-    private _logLogbooksEntity : any;
-
     constructor(connection : any){
         super(new Logbooks('logbooks', connection, '0'), 'logbooks');
-        this._logLogbooksEntity = new LogsLogbooks('logs_logbooks', connection);
     }
 
 

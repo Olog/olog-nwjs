@@ -20,7 +20,7 @@ class Writer{
      * @param callback
      */
     public removeFile(filepath : string, callback : any){
-        return callback(fs.unlink(filepath));
+        return callback(fs.unlinkSync(filepath));
     }
 
     /**
@@ -33,7 +33,7 @@ class Writer{
         mkdirp(filepath, function (err) {
             if(err) return false;
         });
-        fs.writeFile(filename + '.json', JSON.stringify(data, null, this._filespaceCount));
+        fs.writeFileSync(filename + '.json', JSON.stringify(data, null, this._filespaceCount));
         return true;
     }
 

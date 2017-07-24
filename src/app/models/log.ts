@@ -3,20 +3,10 @@ import Logs = require('../entities/logs');
 
 /**
  * Class for modifying logs in the database
- * Log Attributes:
- *      id,
- *      owner,
- *      description
- *      modified,
- *      source,
- *      state,
- *      level,
- *      entry_id,
- *      version,
  */
-class Log extends ApplicationModel{
+class Log extends ApplicationModel {
 
-    constructor(connection : any){
+    constructor(connection: any) {
         super(new Logs('logs', connection), 'logs');
     }
 
@@ -25,8 +15,38 @@ class Log extends ApplicationModel{
      * @param id
      * @param callback
      */
-    public destroy(id : number, callback : any){
+    public destroy(id: number, callback: any) {
         return this.mainEntity.destroy(id, callback);
+    }
+
+    /**
+     * Inserts a row into the log table
+     * @param params
+     * @param callback
+     * @returns {IQuery}
+     */
+    public insert(params: any, callback: any) {
+        return this.mainEntity.insert(params, callback);
+
+    }
+
+    public update(params: any, callback: any) {
+        return this.mainEntity.update(params, callback);
+    }
+
+    public all(page: any, searchParams: any, callback: any) {
+        let params: any = searchParams;
+        delete params.page;
+
+        if (params === undefined || params === {}) {
+            this.mainEntity.all(page, callback);
+        }else {
+            this.mainEntity.search(page, params, callback);
+        }
+    }
+
+    public get(id: number, callback: any) {
+        return this.mainEntity.get(id, callback);
     }
 
 }

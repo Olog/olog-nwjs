@@ -1,9 +1,9 @@
 import LogModel = require('../models/log');
 import ApplicationRouter = require('./app');
 
-class LogsRouter extends ApplicationRouter{
-    constructor(connection : any, authentication : any){
-        super("/logs/", new LogModel(connection), authentication);
+class LogsRouter extends ApplicationRouter {
+    constructor(connection: any, authentication: any) {
+        super('/logs/', new LogModel(connection), authentication);
 
         let that = this;
 
@@ -14,7 +14,15 @@ class LogsRouter extends ApplicationRouter{
          *  based on multi-parameter query specifying patterns for tag
          *  and logbook details to match against
          */
-        that.router.get('/', function(req : any, res : any) {
+        that.router.get('/', function(req: any, res: any) {
+            that.model.all(req.query.page, req.query, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
+            });
 
         });
 
@@ -24,9 +32,14 @@ class LogsRouter extends ApplicationRouter{
          * GET method for retrieving an instance of a Log identified by an id
          *
          */
-        that.router.get('/:logId', function(req : any, res : any){
-            that.model.getById(req.params.logId, function(err : any, elem : any){
-                res.set('Content-Type', 'text/xml');
+        that.router.get('/:logId', function(req: any, res: any){
+            that.model.getById(req.params.logId, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
             });
         });
 
@@ -38,8 +51,15 @@ class LogsRouter extends ApplicationRouter{
          *
          * @param data Logs data
          */
-        that.router.post('/', function(req : any, res : any){
-
+        that.router.post('/', function(req: any, res: any){
+            that.model.insert(req.body, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
         /**
@@ -51,8 +71,15 @@ class LogsRouter extends ApplicationRouter{
          * @param logId id of the log to add to.
          * @param data Logs data
          */
-        that.router.post('/:logId', function(req : any, res : any){
-
+        that.router.post('/:logId', function(req: any, res: any) {
+            that.model.update(req.body, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
         /**
@@ -64,7 +91,7 @@ class LogsRouter extends ApplicationRouter{
          * @param data
          * @param data Logs data
          */
-        that.router.post('/:import', function(req : any, res : any){
+        that.router.post('/:import', function(req: any, res: any) {
 
         });
 
@@ -78,8 +105,15 @@ class LogsRouter extends ApplicationRouter{
          * @param logId
          * @param data
          */
-        that.router.put('/:logId', function(req : any, res : any){
-
+        that.router.put('/:logId', function(req: any, res: any) {
+            that.model.update(req.body, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
         /**
@@ -90,8 +124,15 @@ class LogsRouter extends ApplicationRouter{
          *
          * @param logId log to remove
          */
-        that.router.delete('/:logId', function(req : any, res : any){
-
+        that.router.delete('/:logId', function(req: any, res: any) {
+            that.model.destroy(req.params.logId, function(err: any, elem: any) {
+                res.set('Content-Type', 'text/json');
+                if (err) {
+                    res.send(that.model.setJSON(err));
+                }else {
+                    res.send(that.model.setJSON(elem));
+                }
+            });
         });
 
     }
