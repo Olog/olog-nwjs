@@ -1,23 +1,14 @@
 import ApplicationModel = require('./app');
 import Tags = require('../entities/logbooks');
-import LogsLogbooks = require('../entities/logs_logbooks');
 
 /**
  * Class for modifying logs in the database
- * Tag Attributes:
- *      id,
- *      name,
- *      is_tag=1,
- *      owner,
- *      state
  */
 class Tag extends ApplicationModel{
 
-    private _logTagsEntity : any;
 
     constructor(connection : any){
         super(new Tags('logbooks', connection, '1'), 'tags');
-        this._logTagsEntity = new LogsLogbooks('logs_logbooks', connection);
     }
 
 

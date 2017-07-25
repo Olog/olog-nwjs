@@ -10,5 +10,9 @@
         "removeComments": false,
         "preserveConstEnums": true,
         "sourceMap": false
-    }
+    },
+    "files": [
+        "./../../node_modules/git-grep/lib/parser.js",
+        "./../../node_modules/git-grep/index.js"
+    ]
 }

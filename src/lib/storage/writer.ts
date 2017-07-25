@@ -41,7 +41,7 @@ class Writer{
      * Opens and reads from a file with the given path
      * @param filepath Path to the file to open (with extensions)
      */
-    public importJSON(filepath : string) {
+    public importJSON(filepath: string) : any{
 
         fs.readFile(filepath, function (err, data) {
             if (err) {

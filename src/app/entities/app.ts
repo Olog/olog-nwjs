@@ -12,7 +12,7 @@ class ApplicationModel {
      * @param tablename Name of Table
      * @param connection DB
      */
-    constructor(tablename : string, connection : any){
+    constructor(tablename: string, connection: any) {
         this._tableName = tablename;
         this._conn = connection;
     }
@@ -22,13 +22,13 @@ class ApplicationModel {
      * object of year, mon, day,timestamp
      * @param unixtime
      */
-    public dateCreated(unixtime : any) : any {
-        let tt : any = new Date(unixtime);
+    public dateCreated(unixtime: any): any {
+        let tt: any = new Date(unixtime);
         return {
             year: tt.getFullYear(),
             month: tt.getMonth(),
             day: tt.getDate(),
-            timestamp: unixtime
+            timestamp: unixtime,
         };
     }
 
@@ -48,7 +48,7 @@ class ApplicationModel {
         return this._conn;
     }
 
-    get filePath() : string{
+    get filePath(): string{
         return this._conn.pathName;
     }
 
@@ -56,7 +56,7 @@ class ApplicationModel {
      * Overwritten by each entity class
      * For custom git file json format
      */
-    public serialize(data : any) {
+    public serialize(data: any) {
         return {};
     }
 }

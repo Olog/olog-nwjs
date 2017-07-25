@@ -45,7 +45,7 @@ class Log extends ApplicationModel {
         }
     }
 
-    public get(id: number, callback: any) {
+    public getById(id: number, callback: any) {
         return this.mainEntity.get(id, callback);
     }
 

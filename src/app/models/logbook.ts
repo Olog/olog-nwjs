@@ -5,9 +5,9 @@ import LogsLogbooks = require('../entities/logs_logbooks');
 /**
  * Class for modifying logs in the database
  */
-class Logbook extends ApplicationModel{
+class Logbook extends ApplicationModel {
 
-    constructor(connection : any){
+    constructor(connection: any) {
         super(new Logbooks('logbooks', connection, '0'), 'logbooks');
     }
 
@@ -18,8 +18,8 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public all(page : any, callback : any){
-        return this.mainEntity.all(page,callback);
+    public all(page: any, callback: any) {
+        return this.mainEntity.all(page, callback);
     }
 
     /**
@@ -28,8 +28,8 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public get(name : number, callback : any){
-        return this.mainEntity.getByName(name,callback);
+    public get(name: number, callback: any) {
+        return this.mainEntity.getByName(name, callback);
 
     }
 
@@ -40,7 +40,7 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public update(logbookName : string, params : any, callback : any){
+    public update(logbookName: string, params: any, callback: any) {
         return this.mainEntity.updateByName(logbookName, params, callback);
     }
 
@@ -50,7 +50,7 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public insert(params : any, callback : any){
+    public insert(params: any, callback: any) {
         return this.mainEntity.insert(params, callback);
 
     }
@@ -62,28 +62,28 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public setToLogs(logbookName : string, params : any, callback : any){
-        //gets the tag/logbook from the logbookName
-        let returnAll : any = [];
-        this.mainEntity.getByName(logbookName, function(err : any, elem : any){
-            if(err){
+    public setToLogs(logbookName: string, params: any, callback: any) {
+        // gets the tag/logbook from the logbookName
+        let returnAll: any = [];
+        this.mainEntity.getByName(logbookName, function(err: any, elem: any){
+            if (err) {
                 return err;
-            }else{
+            }else {
                 for (let log of params.logs){
-                    //creates log_logbook entries for all the log ids in the data
+                    // creates log_logbook entries for all the log ids in the data
                     this._logLogbooksEntity.insert(
                         {
                             log_id : log.id,
-                            logbook_id : elem.logbook_id
+                            logbook_id : elem.logbook_id,
                         },
-                        function(err : any, elem : any){
-                            if(err){
-                                return err;
-                            }else{
-                                returnAll.push(elem);
+                        function(errt: any, elemt: any){
+                            if (errt) {
+                                return errt;
+                            }else {
+                                returnAll.push(elemt);
                             }
-                        }
-                    )
+                        },
+                    );
                 }
 
             }
@@ -97,22 +97,22 @@ class Logbook extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(id : number, callback : any){
+    public destroy(id: number, callback: any) {
         return this.mainEntity.destroy(id, callback);
 
     }
 
     /**
      * Deletes records of tags from a log
-     * @param log_id
+     * @param logId
      * @param logbookName
      * @param callback
      */
-    public destroyByLog(log_id : any, logbookName : string, callback : any){
-        return this._logLogbooksEntity.destroyByLog(log_id, logbookName, callback);
+    public destroyByLog(logId: any, logbookName: string, callback: any) {
+//
     }
 
-    public destroyByName( logbookName : string, callback : any){
+    public destroyByName( logbookName: string, callback: any) {
         return this.mainEntity.destroybyName(logbookName, callback);
     }
 
