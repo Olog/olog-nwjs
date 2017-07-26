@@ -1,12 +1,16 @@
 import NG = require('nodegit');
+import FileManager = require('./writer');
 import fs = require('fs');
-import fileManager = require('writer');
-import * as gitGrep from './../../../node_modules/git-grep/index.js';
+
+// import * as gitGrep from './../../../node_modules/git-grep/';
 
 /**
  * Class for writing/reading data from the git repo
  */
 class StorageDir {
+
+    private _fileManager : any = new FileManager();
+
 
     // name of folder containing the repository remote
     private _folderName : string = 'ologDir';
@@ -22,11 +26,14 @@ class StorageDir {
     // Remote object
     private _remote : any;
 
-    private _user : any;
 
     private _index : any;
 
     private _oid : any;
+
+    get fileManager(): any {
+        return this._fileManager;
+    }
 
     get folderName(): string {
         return this._folderName;
@@ -44,10 +51,6 @@ class StorageDir {
         return this._remoteName;
     }
 
-    get user(): any {
-        return this._user;
-    }
-
     /**
      * Constructor
      * @param configs Configurations imported on application start
@@ -62,14 +65,45 @@ class StorageDir {
             this._remoteName = configs.repo_conf.remote_name;
         }
 
-        // initialize a repository if it does not exist
-        this.initialize(function(event: any) {
-            this.fetchAll();
+        console.log('Initializing Repo...');
 
-            // get index for add/commits
-            this._repo.refreshIndex().then(function(indexResult: any){
-                this._index = indexResult;
+        NG.Repository.open(this._pathName).then(function( repository: any) {
+            this._repo = repository;
+            return repository.fetchAll({
+                callbacks: {
+                    credentials: function(url: any, userName: any, password: any){
+                        return this.auth(userName, password);
+                    },
+                    certificateCheck: function() {
+                        return 1;
+                    },
+                },
             });
+        })
+        .then(function() {
+            return this._repo.mergeBranches('master', 'origin/master');
+        });
+    }
+
+    /**
+     * Initialize a repository by cloning it from the given URL
+     * @param callback
+     */
+    private initializeClone (callback: any) {
+        NG.Clone.clone(this.remoteURL, this._pathName).then(function(repo: any) {
+            callback('Respository Cloned', repo);
+
+        });
+    }
+
+    /**
+     * Initialize the repository and remote
+     * @param callback
+     */
+    private initialize(callback: any) {
+        NG.Repository.init(this._pathName + '/.git', false).then(function( repository: any) {
+            callback('Respository Cloned', repository );
+
         });
     }
 
@@ -83,19 +117,26 @@ class StorageDir {
     /**
      *
      * @param data Data for specific git events like commit/ author timestamps
-     * @param action Action for modifying the files on the index
+     * @param actionItem File modifications
      * @param msg Commit Message to Print
      * @param person Author name and email for this commit
-     * @param tags
      */
-    public commit(data: any, action: any, msg: string, person: any, tags: any) {
+    public commit(data: any, actionItem: string, msg: string, person: any) {
         // get index for add/commits
-        this._repo.refreshIndex()
+        NG.Repository.open(this._pathName + '/.git')
+            .then(function(repoResult){
+            this._repo = repoResult;
+            return this._repo.refreshIndex();
+        })
             .then(function(indexResult: any){
                 this._index = indexResult;
             })
             .then(function(){
-                return action;
+                if (actionItem !== null) {
+                    return this.add();
+                } else {
+                    return this.remove(this._pathName + '/' + actionItem);
+                }
             })
             .then(function(){
                 // write the files to the index
@@ -125,11 +166,26 @@ class StorageDir {
                     [parent],
                 );
             })
-            .done(function(commitId: any){
+            .then(function(commitId: any){
                 // commit finished
-                // console.log('New Commit:', commitId);
+                console.log('New Commit :', commitId);
 
-                return commitId;
+                return NG.Remote.create(
+                    this._repo, this._remoteName, this._remoteURL,
+                );
+            })
+            .then(function(remoteResult){
+                this._remote = remoteResult;
+                return this._remote.push(
+                    ['refs/heads/master:refs/heads/master'],
+                    {
+                        callbacks: {
+                            credentials: function(url: any, userName: any, password: any){
+                                this.auth(userName, password);
+                            },
+                        },
+                    },
+                );
             });
     }
 
@@ -137,16 +193,23 @@ class StorageDir {
      * Pushes any changes that have been committed to the remote repository
      */
     public pushToRepo() {
-        return this._remote.push(
-            ['refs/heads/master:refs/heads/master'],
-            {
-                callbacks: {
-                    credentials: function(url: any, userName: any, password: any){
-                        this.auth(userName, password);
+        NG.Repository.open(this._pathName + '/.git')
+            .then(function(repoResult){
+                this._repo = repoResult;
+                return this._repo.refreshIndex();
+        }).then(function(indexStat) {
+            return this._remote.push(
+                ['refs/heads/master:refs/heads/master'],
+                {
+                    callbacks: {
+                        credentials: function(url: any, userName: any, password: any){
+                            this.auth(userName, password);
+                        },
                     },
                 },
-            },
-        );
+            );
+        });
+
     }
 
     /**
@@ -160,11 +223,10 @@ class StorageDir {
 
     /**
      * Adds the changes made in the repository
-     * @param filepath If only adding a single file
      * @returns {number}
      */
-    public add(filepath: string) {
-        return this._index.addByPath(filepath || this._pathName);
+    public add() {
+        return this._index.addByPath(this._pathName);
     }
 
 
@@ -182,15 +244,15 @@ class StorageDir {
 
         let searchString = '';
         let first: boolean = true;
-        for (let entry of searchParams) {
+        for (let items of searchParams) {
 
             // Set the extra params for git-grep
             if (!first) {
                 searchString += ' --and -e ';
             }
 
-            let fileContents = fileManager.importJSON(items);
-            newArr.push(fileContents);
+            // let fileContents = fileManager.importJSON(items);
+            // newArr.push(fileContents);
             first = false;
         }
     }
@@ -198,7 +260,7 @@ class StorageDir {
     private convertToFolders (items: any) {
         let newArr = [];
         for (let entry of items) {
-            let fileContents = fileManager.importJSON(items);
+            let fileContents = this._fileManager.importJSON(items);
             newArr.push(fileContents);
         }
 
@@ -214,19 +276,23 @@ class StorageDir {
             return this.returnFromSorted();
         }
 
-        gitGrep((this._pathName + '/.git'), {
-            rev: 'HEAD',
-            term: term,
-        })
-            .on('data', function(data: any) {
-                return this.convertToFolders(data);
-            })
-            .on('error', function(err: any) {
-                return null;
-            })
-            .on('end', function(){
-                // end
-            });
+        /**
+         *
+         *   gitGrep((this._pathName + '/.git'), {
+         *      rev: 'HEAD',
+         *      term: term,
+         *   })
+         *   .on('data', function(data: any) {
+         *       return this.convertToFolders(data);
+         *   })
+         *   .on('error', function(err: any) {
+         *       return null;
+         *   })
+         *   .on('end', function(){
+         *       // end
+         *   });
+         */
+
     }
 
     /**
@@ -239,22 +305,6 @@ class StorageDir {
      */
     private sign(autherEmail: any, authorName: any, time: any, offset: any) {
         return NG.Signature.create(authorName, autherEmail, time, offset);
-    }
-
-    /**
-     * Initialize the repository and remote
-     * @param callback
-     */
-    private initialize(callback: any) {
-        NG.Repository.init(this._pathName, false).then(function( repository: any) {
-            // Use repository
-            this._repo = repository;
-
-            // create the remote
-            this._remote = NG.Remote.create(repository, this._remoteName, this._remoteURL);
-
-            callback('Repository Initialized');
-        });
     }
 
 

@@ -9,18 +9,7 @@ import favicon = require('serve-favicon');
 import morgan = require('morgan');
 import session = require('express-session');
 
-let configurations : any = null;
-// load configuration start
-//////////////////////////////////////////////////////////////
-
-fs.readFile('./config/configs.json', function (err, data) {
-  if (err) {
-    return console.error(err);
-  }
-
-  configurations =  JSON.parse(data.toString());
-});
-/////////////////////////////////////////////////////////
+let configurations: any = null;
 
 //db connection
 import GitStor = require('../lib/storage/main');
@@ -239,13 +228,24 @@ async function doStart(): Promise<void> {
   app.use(express.static(path.resolve(__dirname, '../public')));
   app.use(express.static(path.resolve(__dirname, '../bower_components')));
 
+  // load configuration start
+//////////////////////////////////////////////////////////////
+
+  configurations = fs.readFileSync('./config/configs.json');
+
+  if (configurations === undefined) {
+    return console.error('Error opening config file - /config/configs.json !');
+  }
+
+  configurations =  JSON.parse(configurations.toString());
+
   let git = new GitStor(configurations.gitConfigs);
 
   app.use('/status', status.router);
 
   let auth = new Auth(configurations.authconfig);
 
-  //set the routes for all the models and connection to the database
+  // set the routes for all the models and connection to the database
   new IndexRouter(app, git, auth);
 
   // catch 404 and forward to error handler

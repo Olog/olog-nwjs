@@ -1,11 +1,16 @@
-import FileManager = require('../../lib/storage/writer');
+import User = require('./user');
 
 class ApplicationModel {
     private _tableName : any = null;
 
     private _conn : any = null;
 
-    private _fileManager : any = new FileManager();
+    private _user : any;
+
+    get user(): any {
+        return this._user;
+    }
+
 
     /**
      * constructor
@@ -15,6 +20,8 @@ class ApplicationModel {
     constructor(tablename: string, connection: any) {
         this._tableName = tablename;
         this._conn = connection;
+
+        this._user = new User({});
     }
 
     /**
@@ -23,7 +30,7 @@ class ApplicationModel {
      * @param unixtime
      */
     public dateCreated(unixtime: any): any {
-        let tt: any = new Date(unixtime);
+        let tt: any = new Date(unixtime * 1000);
         return {
             year: tt.getFullYear(),
             month: tt.getMonth(),
@@ -33,7 +40,7 @@ class ApplicationModel {
     }
 
     get fileManager(): any {
-        return this._fileManager;
+        return this.conn.fileManager;
     }
 
     get tableName(): any {

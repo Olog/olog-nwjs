@@ -65,15 +65,31 @@ class Logs extends ApplicationEntity {
 
         let date = this.dateCreated(params.createdAt);
         // filepath to insert by: /logs/year
-        this.fileManager.writeFile(temp,
-            this.filePath + '/logs/' +
+        console.log(date);
+        this.fileManager.writeJSON(temp,
+            this.filePath + '/' +
+            params.logbook + '/logs/' +
             date.year   +   '/' +
             date.month  +   '/' +
-            date.day,
+            date.day    +   '/' +
+            params.createdAt,
             date.timestamp,
         );
 
-        // commit
+        // commits and pushes to repo master branch
+        this.conn.commit(
+            {
+                auditTime: params.createdAt,
+                eventTime: params.eventTime,
+            },
+            null,
+            'Log Entry Added',
+            {
+                name: this.user.name,
+                email: this.user.email,
+            },
+        );
+
         return temp;
     }
 
@@ -91,12 +107,48 @@ class Logs extends ApplicationEntity {
 
     /**
      * Destroys a log given the id
-     * @param id
+     * @param createdAt
+     * @param logbook
      * @param callback
      * @returns {IQuery|any}
      */
-    public destroy(id: number, callback: any) {
+    public destroy(createdAt: number, logbook: string, callback: any) {
+        let date = this.dateCreated(createdAt);
+        // filepath to insert by: /logs/year
+        console.log(date);
 
+        let logPath = this.filePath + '/' +
+                logbook + '/logs/' +
+                date.year   +   '/' +
+                date.month  +   '/' +
+                date.day    +   '/' +
+                createdAt;
+
+        let temp: any = this.fileManager.importJSON(logPath);
+
+        this.fileManager.removeFile(
+            logPath,
+            function (err: any) {
+                // handle file delete action
+                if (err) {console.log(err); }
+            },
+        );
+
+        // commits and pushes to repo master branch
+        this.conn.commit(
+            {
+                auditTime: null,
+                eventTime: null,
+            },
+            true, // git remove cmd
+            'Log Entry Added',
+            {
+                name: this.user.name,
+                email: this.user.email,
+            },
+        );
+
+        return temp;
     }
 }
 

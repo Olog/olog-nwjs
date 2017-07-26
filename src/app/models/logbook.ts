@@ -1,6 +1,5 @@
 import ApplicationModel = require('./app');
 import Logbooks = require('../entities/logbooks');
-import LogsLogbooks = require('../entities/logs_logbooks');
 
 /**
  * Class for modifying logs in the database

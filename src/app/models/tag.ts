@@ -105,8 +105,8 @@ class Tag extends ApplicationModel{
      * @param tagName
      * @param callback
      */
-    public destroyByLog(log_id : any, tagName : string, callback : any){
-        return this._logTagsEntity.destroyByLog(log_id, tagName, callback);
+    public destroyByLog(logId : any, tagName : string, callback : any){
+        //
     }
 
     public destroyByName( tagName : string, callback : any){

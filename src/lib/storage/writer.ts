@@ -4,9 +4,9 @@ import mkdirp = require('mkdirp');
 /**
  * Handles opening/saving JSON files to and from the git repository
  */
-class Writer{
+class Writer {
 
-    //number of spaces the JSON will be indented on each line
+    // number of spaces the JSON will be indented on each line
     private _filespaceCount : number = 4;
 
     /**
@@ -33,7 +33,7 @@ class Writer{
         mkdirp(filepath, function (err) {
             if(err) return false;
         });
-        fs.writeFileSync(filename + '.json', JSON.stringify(data, null, this._filespaceCount));
+        fs.writeFileSync(filepath + '/' + filename + '.json', JSON.stringify(data, null, this._filespaceCount));
         return true;
     }
 
