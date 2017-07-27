@@ -1,5 +1,5 @@
 /**
- * Test the application status REST API
+ * Test the application logbook REST API
  */
 import * as fs from 'fs';
 import * as path from 'path';
