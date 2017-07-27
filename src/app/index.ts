@@ -5,7 +5,6 @@ import path = require('path');
 import rc = require('rc');
 import bodyparser = require('body-parser');
 import express = require('express');
-import favicon = require('serve-favicon');
 import morgan = require('morgan');
 import session = require('express-session');
 
@@ -189,9 +188,6 @@ async function doStart(): Promise<void> {
   // view engine configuration
   app.set('views', path.resolve(__dirname, '../views'));
   app.set('view engine', 'pug');
-
-  // favicon configuration
-  app.use(favicon(path.resolve(__dirname, '../public', 'favicon.ico')));
 
   // morgan configuration
   morgan.token('remote-user', function (req) {
