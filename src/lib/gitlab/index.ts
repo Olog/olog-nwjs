@@ -8,7 +8,7 @@ import https = require('https');
 class GitLab {
 
     private _options: any = {
-        host: 'https://gitlab.example.com/api/v4',
+        host: 'gitlab.com/api/v4',
         port: 80,
         path: '',
         method: '',
@@ -17,23 +17,31 @@ class GitLab {
 
     private _groupname: string = '';
 
-    constructor(key, groupname) {
+    constructor(key: string, groupname: string) {
         this._key = key;
         this._groupname = groupname;
     }
 
-    public groupDetails(callback) {
+    public groupDetails(callback: any) {
         return https.request(this.options('/groups/' + this._groupname, 'GET'), callback);
     }
 
-    public projectDetails(project, callback) {
-        return https.request(
-            this.options('/groups/' + this._groupname + '/projects', 'GET'),
-            callback,
+    public projectDetails(projectname: string, callback: any) {
+        https.request(
+            this.options('/groups/' + this._groupname + '/projects', 'GET'), function(res){
+                console.log(res);
+
+                return callback(res);
+               //res.on('data', (d) => {
+               //    let result = JSON.parse(d).map(function(a: any) {return a.name === projectname; } );
+               //    return callback(result);
+               //});
+
+            },
         );
     }
 
-    public newProject(projectname, callback) {
+    public newProject(projectname: string, callback: any) {
         return https.request(
             this.options(   '/projects?namespace='  +
                             this._groupname         +
@@ -44,21 +52,15 @@ class GitLab {
         );
     }
 
-    public deleteProject(projectname, callback) {
-
-    }
-
     public login() {
-
+        ///
     }
 
     public checkPermissions() {
+        ///
 
     }
 
-    public newProject() {
-
-    }
 
     /**
      * Sets the path and method for a request
@@ -66,7 +68,7 @@ class GitLab {
      * @param method
      * @returns {any}
      */
-    private options(path, method): any {
+    private options(path: string, method: string): any {
         this._options.path = path;
         this._options.method = method;
         this._options.headers = {
@@ -76,3 +78,6 @@ class GitLab {
     }
 
 }
+
+
+export = GitLab;

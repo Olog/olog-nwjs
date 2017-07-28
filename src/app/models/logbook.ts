@@ -7,7 +7,7 @@ import Logbooks = require('../entities/logbooks');
 class Logbook extends ApplicationModel {
 
     constructor(connection: any) {
-        super(new Logbooks('logbooks', connection, '0'), 'logbooks');
+        super(new Logbooks('logbooks', connection), 'logbooks');
     }
 
 

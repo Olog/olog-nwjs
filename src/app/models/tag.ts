@@ -4,11 +4,11 @@ import Tags = require('../entities/logbooks');
 /**
  * Class for modifying logs in the database
  */
-class Tag extends ApplicationModel{
+class Tag extends ApplicationModel {
 
 
-    constructor(connection : any){
-        super(new Tags('logbooks', connection, '1'), 'tags');
+    constructor(connection: any) {
+        super(new Tags('logbooks', connection), 'tags');
     }
 
 
@@ -18,8 +18,8 @@ class Tag extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public all(page : any, callback : any){
-        return this.mainEntity.all(page,callback);
+    public all(page: any, callback: any) {
+        return this.mainEntity.all(page, callback);
     }
 
     /**
@@ -28,7 +28,7 @@ class Tag extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public get(name : string, callback : any){
+    public get(name: string, callback: any) {
         return this.mainEntity.getByName(name, callback);
     }
 
@@ -39,7 +39,7 @@ class Tag extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public update(tagName : string, params : any, callback : any){
+    public update(tagName: string, params: any, callback: any) {
         return this.mainEntity.updateByName(tagName, params, callback);
     }
 
@@ -49,7 +49,7 @@ class Tag extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public insert(params : any, callback : any){
+    public insert(params: any, callback: any) {
         return this.mainEntity.insert(params, callback);
     }
 
@@ -95,7 +95,7 @@ class Tag extends ApplicationModel{
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(tag_id : number, callback : any){
+    public destroy(tag_id: number, callback: any) {
         return this.mainEntity.destroy(tag_id, callback);
     }
 
@@ -105,11 +105,11 @@ class Tag extends ApplicationModel{
      * @param tagName
      * @param callback
      */
-    public destroyByLog(logId : any, tagName : string, callback : any){
+    public destroyByLog(logId: any, tagName: string, callback: any) {
         //
     }
 
-    public destroyByName( tagName : string, callback : any){
+    public destroyByName( tagName: string, callback: any) {
         return this.mainEntity.destroybyName(tagName, callback);
     }
 

@@ -26,10 +26,15 @@ class StorageDir {
     // Remote object
     private _remote : any;
 
+    private _gitlab : any;
 
     private _index : any;
 
     private _oid : any;
+
+    get gitlab(): any {
+        return this._gitlab;
+    }
 
     get fileManager(): any {
         return this._fileManager;
@@ -57,6 +62,8 @@ class StorageDir {
      */
     constructor(configs: any) {
 
+        this._gitlab = configs.gitlabConfigs;
+
         // create a folder for the contents from the given path
         this._pathName = configs.repo_conf.local_path;
         this._remoteURL = configs.repo_conf.url;
@@ -67,7 +74,7 @@ class StorageDir {
 
         console.log('Initializing Repo...');
 
-        NG.Repository.open(this._pathName).then(function( repository: any) {
+        NG.Clone.clone(this.remoteURL, this._pathName).then(function(repository: any) {
             this._repo = repository;
             return repository.fetchAll({
                 callbacks: {
