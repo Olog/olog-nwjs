@@ -17,12 +17,22 @@ class Logs extends ApplicationEntity {
         super(tablename, connection);
     }
 
+    /**
+     * Formats the data into json for saving
+     * @param data {
+     *  level: string
+     *  state: string,
+     *  description: string
+     *  tags: array fo tag names (strings),
+     * }
+     */
     public serialize(data: any) {
         return {
             log : {
                 level : data.level,
                 state : data.state,
                 description : data.description,
+                tags: data.tags,
             },
         };
 
@@ -65,17 +75,20 @@ class Logs extends ApplicationEntity {
 
         let date = this.dateCreated(params.createdAt);
         // filepath to insert by: /logs/year
-        console.log(date);
-        this.fileManager.writeJSON(temp,
-            this.filePath + '/' +
+
+        let logPath = this.filePath + '/' +
             params.logbook + '/logs/' +
             date.year   +   '/' +
             date.month  +   '/' +
             date.day    +   '/' +
-            params.createdAt,
+            params.createdAt;
+
+        this.fileManager.writeJSON(temp,
+            logPath,
             date.timestamp,
         );
 
+        // save the files to the correct folder location
         // commits and pushes to repo master branch
         this.conn.commit(
             {

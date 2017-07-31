@@ -31,7 +31,7 @@ class Writer {
      */
     public writeJSON(data : any, filepath : string, filename : string){
         mkdirp(filepath, function (err) {
-            if(err) return false;
+            if (err) return false;
         });
         fs.writeFileSync(filepath + '/' + filename + '.json', JSON.stringify(data, null, this._filespaceCount));
         return true;

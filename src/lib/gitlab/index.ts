@@ -61,7 +61,6 @@ class GitLab {
 
     }
 
-
     /**
      * Sets the path and method for a request
      * @param path

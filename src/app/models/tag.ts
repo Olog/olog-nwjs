@@ -1,5 +1,5 @@
 import ApplicationModel = require('./app');
-import Tags = require('../entities/logbooks');
+import Tags = require('../entities/tags');
 
 /**
  * Class for modifying logs in the database
