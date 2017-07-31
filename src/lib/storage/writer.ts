@@ -12,14 +12,14 @@ class Writer {
     /**
      * constructor
      */
-    constructor(){}
+    constructor() {}
 
     /**
      * Removes a file from the given path
      * @param filepath
      * @param callback
      */
-    public removeFile(filepath : string, callback : any){
+    public removeFile(filepath: string, callback: any) {
         return callback(fs.unlinkSync(filepath));
     }
 
@@ -29,7 +29,7 @@ class Writer {
      * @param filepath String containing path to hold the file.
      * @param filename Name fo the file (no extensions)
      */
-    public writeJSON(data : any, filepath : string, filename : string){
+    public writeJSON(data: any, filepath: string, filename: string) {
         mkdirp(filepath, function (err) {
             if (err) return false;
         });

@@ -9,13 +9,16 @@ class Tags extends ApplicationEntity {
         super(tablename, connection);
     }
 
+    private getTagData() {
+        return this.fileManager.importJSON(this.filePath + '/tags.json').tags;
+    }
     /**
      * Read the JSON file containing all tags
      * @param page
      * @param callback
      */
     public all(page: any, callback: any) {
-        return callback(this.fileManager.importJSON(this.filePath + '/tags.json').tags);
+        return callback(this.getTagData());
     }
 
     /**
@@ -24,11 +27,27 @@ class Tags extends ApplicationEntity {
      * @param callback
      */
     public insert(params: any, callback: any) {
-        let tagData = this.fileManager.importJSON(this.filePath + '/tags.json').tags;
+        let tagData: any = this.getTagData;
+        let newTag =   {
+            name: params.name,
+            owner: params.owner
+        };
+        tagData.push(newTag);
+
+        this.fileManager.writeJSON({tags: tagData},
+            this.filePath,
+            'tags',
+        );
+
+        // push and commit the results
+
+        return callback(newTag);
     }
 
     public getByName(tagname: string, callback: any) {
-
+        let tagData = this.getTagData;
+        let tagData: any = this.getTagData;
+        return callback();
     }
 
     public update(id: number, params: any, callback: any) {
