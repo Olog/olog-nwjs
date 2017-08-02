@@ -1,0 +1,526 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Olog API",
+    "version": "0.0.1",
+    "title": "Olog",
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "olog.io",
+  "basePath": "/v1",
+  "tags": [
+    {
+      "name": "logs"
+    },
+    {
+      "name": "logbooks"
+    },
+    {
+      "name": "tags"
+    },
+    {
+      "name": "properties"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/logs": {
+      "post": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Create a new Log",
+        "description": "",
+        "operationId": "addLog",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Log object to be added",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/log"
+            }
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Update an existing pet",
+        "description": "",
+        "operationId": "updatePet",
+        "consumes": [
+          "application/json",
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Pet object that needs to be added to the store",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Pet not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Find log by ID",
+        "description": "Returns a single log",
+        "operationId": "getLogById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "description": "ID of log to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Log"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Log not found"
+          }
+        },
+        "security": [
+        ]
+      }
+    },
+    "/logs/{logId}": {
+      "get": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Find log by ID",
+        "description": "Returns a single log",
+        "operationId": "getLogById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "description": "ID of log to return",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Log"
+            }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Log not found"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Updates a log with the given form data.",
+        "description": "",
+        "operationId": "UpdateLog",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "description": "ID of log that needs to be updated",
+            "required": true,
+            "type": "integer",
+            "format": "int128"
+          },
+          {
+            "name": "description",
+            "in": "formData",
+            "description": "Updated description of the log",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "level",
+            "in": "formData",
+            "description": "Updated level of the log",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "405": {
+            "description": "Invalid input"
+          }
+        },
+        "security": [
+        ]
+      },
+      "delete": {
+        "tags": [
+          "logs"
+        ],
+        "summary": "Deletes a log",
+        "description": "",
+        "operationId": "deleteLog",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "logId",
+            "in": "path",
+            "description": "Log id to delete",
+            "required": true,
+            "type": "integer",
+            "format": "int128"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Log not found"
+          }
+        },
+        "security": [
+        ]
+      }
+    },
+    "/logbooks":{
+      "post": {
+        "tags": [
+          "logbooks"
+        ],
+      },
+      "get": {
+        "tags":[
+          "logbooks"
+        ]
+      }
+    },
+    "/logbooks/{logbookId}":{
+      "get":{
+        "tags":[
+          "logbooks"
+        ]
+      },
+      "put":{
+        "tags":[
+          "logbooks"
+        ]
+      },
+      "delete":{
+        "tags":[
+          "logbooks"
+        ]
+      },
+    },
+    "/tags":{
+      "get":{
+        "tags":[
+          "tags"
+        ]
+      },
+      "post":{
+        "tags":[
+          "tags"
+        ]
+      }
+    },
+    "/tags/{tagId}":{
+      "get":{
+        "tags":[
+          "tags"
+        ]
+      },
+      "put":{
+        "tags":[
+          "tags"
+        ]
+      },
+      "delete":{
+        "tags":[
+          "tags"
+        ]
+      }
+    },
+    "/properties":{
+      "get":{
+        "tags":[
+          "properties"
+        ]
+      },
+      "post":{
+        "tags":[
+          "properties"
+        ]
+      }
+    },
+    "/properties/{propertyId}":{
+      "get":{
+        "tags":[
+          "properties"
+        ]
+      },
+      "put":{
+        "tags":[
+          "properties"
+        ]
+      },
+      "delete":{
+        "tags":[
+          "properties"
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Property": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int128"
+        },
+        "attributes": {
+          "type": "array",
+          "xml": {
+            "name": "attribute",
+            "wrapped": true
+          },
+          "items": {
+            "$ref": "#/definitions/Attribute"
+          }
+        },
+        "logId": {
+          "type": "integer",
+          "format": "int128"
+        }
+      }
+    },
+    "Attribute": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "keypair": {
+          "type":"string"
+        }
+      }
+    },
+    "Logbook": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "Tag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      }
+    },
+    "Attachment": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "fileSize": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "thumbnail": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Log": {
+      "type": "object",
+      "required": [
+        "description",
+        "createdDate",
+        "eventStart"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int128"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdDate": {
+          "type": "string"
+        },
+        "eventStart": {
+          "type": "string"
+        },
+        "level": {
+          "type": "string"
+        },
+        "owner":{
+          "type":"string"
+        },
+        "source":{
+          "type": "string"
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Attachment"
+          }
+        },
+        "logbooks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Logbook"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tag"
+          }
+        }
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

@@ -51,7 +51,7 @@ class Tags extends ApplicationEntity {
     }
 
     public update(id: number, params: any, callback: any) {
-
+        let tagData: any = this.getTagData();
     }
 
     public updateByName(tagName: string, params: any, callback: any) {
