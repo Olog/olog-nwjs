@@ -1,5 +1,4 @@
 import ApplicationEntity = require('./app');
-import Attributes = require('./attributes');
 
 /**
  * Properties Table
@@ -7,61 +6,49 @@ import Attributes = require('./attributes');
  * name,
  * state = enum['Active', 'Inactive']
  */
-class Properties extends ApplicationEntity{
-    private _Attributes : any = new Attributes('attributes', this.conn);
+class Properties extends ApplicationEntity {
 
-    constructor(tablename : string, connection : any){
+    constructor(tablename: string, connection: any) {
         super(tablename, connection);
     }
 
+    private getPropertyData() {
+        return this.fileManager.importJSON(this.filePath + '/templates/properties.json').properties;
+    }
     /**
-     * Returns all rows of tags
+     * Returns all rows of properties
      * @param page
      * @param callback
      * @returns {IQuery}
      */
-    public all(page : any, callback : any){
-        return this.conn.query(
-            "SELECT\
-        p.*,\
-            row_to_json(e.*) as attribute  \
-        FROM "+ this.tableName+" p\
-        INNER JOIN "+ this._Attributes.tableName+" e USING(property_id)",
-            callback);
+    public all(page: any, callback: any) {
+        return callback(this.getPropertyData());
     }
 
     /**
-     * Selects a logbook by ID
+     * Selects a property by ID
      * @param id
      * @param callback
      * @returns {IQuery}
      */
-    public getById(id : number, callback : any){
-        return this.conn.query(
-            "SELECT\
-        p.*,\
-            row_to_json(e.*) as attribute  \
-        FROM "+ this.tableName+" p WHERE id=? \
-        INNER JOIN "+ this._Attributes.tableName+" e USING(property_id)",
-            [id],
-            callback);
+    public getById(id: number, callback: any) {
+//
     }
 
     /**
-     * Selects a logbook by ID
+     * Selects a property by Name
      * @param name
      * @param callback
      * @returns {IQuery}
      */
-    public getByName(name : string, callback : any){
-        return this.conn.query(
-            "SELECT\
-        p.*,\
-            row_to_json(e.*) as attribute  \
-        FROM "+ this.tableName+" p WHERE name=? \
-        INNER JOIN "+ this._Attributes.tableName+" e USING(property_id)",
-            [name],
-            callback);
+    public getByName(name: string, callback: any) {
+        let properties = this.getPropertyData();
+
+        let result = properties.filter(function( obj: any ) {
+            return obj.name === name;
+        });
+
+        return result;
     }
 
     /**
@@ -71,16 +58,8 @@ class Properties extends ApplicationEntity{
      * @param callback
      * @returns {IQuery}
      */
-    public update(id : number, params : any, callback : any){
-        return this.conn.query(
-            "UPDATE "+ this.tableName +
-            " set name=?,state=? WHERE id=?" +
-            [
-                params.name,
-                (params.state || 'Active'),
-                id,
-            ],
-            callback);
+    public update(id: number, params: any, callback: any) {
+
     }
 
     /**
@@ -89,34 +68,51 @@ class Properties extends ApplicationEntity{
      * @param callback
      * @returns {IQuery}
      */
-    public insert(params : any, callback : any){
-        return this.conn.query(
-            "INSERT INTO "+ this.tableName +
-            "(name, state)" +
-            " values(?,?)",
-            [
-                params.name,
-                'Active'
-            ],
-            callback);
+    public insert(params: any, callback: any) {
+        let propertyData: any = this.getPropertyData();
+        let newProperty = {
+            name: params.name,
+            attributes: params.attributes, // array of attribute objects
+        };
+
+        if (propertyData === undefined) {
+            propertyData = [];
+        }
+        propertyData.push(newProperty);
+
+        this.fileManager.writeJSON({property: propertyData},
+            this.filePath + '/templates/',
+            'properties',
+        );
+
+        // commit and push the results
+        return callback(newProperty);
     }
 
     /**
-     * Deletes a row from the table
+     * Deletes a row from the table by name
      * @param name
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(name : string, callback : any){
-        return this.conn.query(
-            "UPDATE "+ this.tableName +
-            " set state=? WHERE name=?" +
-            [
-                'Inactive',
-                name
-            ],
-            callback);
+    public destroy(name: string, callback: any) {
+        let propertyData: any = this.getPropertyData();
+        let oldProperty: any = {};
+
+        propertyData = propertyData.filter(function( obj: any) {
+            if (obj.name === name) {
+                oldProperty = obj;
+            }
+            return obj.name !== name;
+        });
+
+        this.fileManager.writeJSON({properties: propertyData},
+        this.filePath + '/properties/',
+        'properties',
+        );
+        return callback(oldProperty);
     };
+
 }
 
 export = Properties;

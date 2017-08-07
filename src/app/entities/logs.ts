@@ -20,6 +20,7 @@ class Logs extends ApplicationEntity {
     /**
      * Formats the data into json for saving
      * @param data {
+     *  uuid: string
      *  level: string
      *  state: string,
      *  description: string
@@ -29,6 +30,7 @@ class Logs extends ApplicationEntity {
     public serialize(data: any) {
         return {
             log : {
+                id: data.id,
                 level : data.level,
                 state : data.state,
                 description : data.description,
@@ -71,6 +73,9 @@ class Logs extends ApplicationEntity {
      * @returns {IQuery|any}
      */
     public insert(params: any, callback: any) {
+        if (params.id === undefined) {
+            params.id = this.genId;
+        }
         let temp: any = this.serialize(params);
 
         let date = this.dateCreated(params.createdAt);
@@ -88,6 +93,7 @@ class Logs extends ApplicationEntity {
             date.timestamp,
         );
 
+
         // save the files to the correct folder location
         // commits and pushes to repo master branch
         this.conn.commit(
@@ -103,7 +109,8 @@ class Logs extends ApplicationEntity {
             },
         );
 
-        return temp;
+
+        return callback(null, temp);
     }
 
 
@@ -128,7 +135,6 @@ class Logs extends ApplicationEntity {
     public destroy(createdAt: number, logbook: string, callback: any) {
         let date = this.dateCreated(createdAt);
         // filepath to insert by: /logs/year
-        console.log(date);
 
         let logPath = this.filePath + '/' +
                 logbook + '/logs/' +

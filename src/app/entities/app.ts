@@ -1,4 +1,5 @@
 import User = require('./user');
+import uuidv1 = require('uuid/v1');
 
 class ApplicationModel {
     private _tableName : any = null;
@@ -9,6 +10,14 @@ class ApplicationModel {
 
     get user(): any {
         return this._user;
+    }
+
+    /**
+     * Generates a UUID string based on the current time
+     * @returns {any}
+     */
+    get genId(): any{
+        return uuidv1();
     }
 
 

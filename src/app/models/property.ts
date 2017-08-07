@@ -1,6 +1,5 @@
 import ApplicationModel = require('./app');
 import Properties = require('../entities/properties');
-import Attributes = require('../entities/attributes');
 
 /**
  * Class for modifying logs in the database
@@ -22,7 +21,6 @@ class Property extends ApplicationModel{
      */
     constructor(connection : any){
         super(new Properties('properties', connection), 'properties');
-        this._attributesEntity = new Attributes('attributes', connection);
 
     }
 

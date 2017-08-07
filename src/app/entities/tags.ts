@@ -5,13 +5,23 @@ import ApplicationEntity = require('./app');
  */
 class Tags extends ApplicationEntity {
 
+    /**
+     * constructor
+     * @param tablename
+     * @param connection
+     */
     constructor(tablename: string, connection: any) {
         super(tablename, connection);
     }
 
+    /**
+     * Gets the array of tags from the tag config file
+     * @returns {any}
+     */
     private getTagData() {
-        return this.fileManager.importJSON(this.filePath + '/tags.json').tags;
+        return this.fileManager.importJSON(this.filePath + '/templates/tags.json').tags;
     }
+
     /**
      * Read the JSON file containing all tags
      * @param page
@@ -27,39 +37,65 @@ class Tags extends ApplicationEntity {
      * @param callback
      */
     public insert(params: any, callback: any) {
-        let tagData: any = this.getTagData;
+        let tagData: any = this.getTagData();
         let newTag =   {
             name: params.name,
-            owner: params.owner
+            owner: params.owner,
         };
+        if (tagData === undefined) {
+            tagData = [];
+        }
         tagData.push(newTag);
 
         this.fileManager.writeJSON({tags: tagData},
-            this.filePath,
+            this.filePath + '/templates/',
             'tags',
         );
-
-        // push and commit the results
-
+        // commit and push the results
         return callback(newTag);
     }
 
+    /**
+     * returns the tag searched by name
+     * @param tagname
+     * @param callback
+     * @returns {any}
+     */
     public getByName(tagname: string, callback: any) {
-        let tagData = this.getTagData;
-        let tagData: any = this.getTagData;
-        return callback();
+        let tagData: any = this.getTagData();
+        return callback(tagData[tagname]);
     }
+
 
     public update(id: number, params: any, callback: any) {
         let tagData: any = this.getTagData();
+        return callback();
     }
 
     public updateByName(tagName: string, params: any, callback: any) {
-
+        return callback();
     }
 
+    /**
+     * destroys a tag by name, does not remove from the logs
+     * @param tagname
+     * @param callback
+     * @returns {any}
+     */
     public destroybyName(tagname: string, callback: any) {
-
+        let tagData: any = this.getTagData();
+        let oldTag: any = {};
+        tagData = tagData.filter(function( obj: any ) {
+            if (obj.name === tagname) {
+                oldTag = obj;
+            }
+            return obj.name !== tagname;
+        });
+        this.fileManager.writeJSON({tags: tagData},
+            this.filePath + '/templates/',
+            'tags',
+        );
+        return callback(oldTag);
     }
 
 }
