@@ -146,7 +146,7 @@ class TagsRouter extends ApplicationRouter {
          * @param tagName
          */
         that.router.delete('/:tagName', function(req: any, res: any){
-            that.model.destroybyName(req.params.tagName, function(err: any, elem: any){
+            that.model.destroy(req.params.tagName, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
                 if (err) {
                     res.send(that.model.setJSON(err));
@@ -156,24 +156,6 @@ class TagsRouter extends ApplicationRouter {
             });
         });
 
-        /**
-         * DELETE /tags/:tagName/:logId
-         *
-         * DELETE method for deleting the given tag from the given log
-         *
-         * @param tagName
-         * @param logId
-         */
-        that.router.delete('/:tagName/:logId', function(req: any, res: any){
-            that.model.destroyByLog(req.params.logId, req.params.tagName, function(err: any, elem: any){
-                res.set('Content-Type', 'text/json');
-                if (err) {
-                    res.send(that.model.setJSON(err));
-                }else {
-                    res.send(that.model.setJSON(elem));
-                }
-            });
-        });
 
     }
 }

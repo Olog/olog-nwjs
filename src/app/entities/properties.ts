@@ -32,7 +32,15 @@ class Properties extends ApplicationEntity {
      * @returns {IQuery}
      */
     public getById(id: number, callback: any) {
-//
+        let properties = this.getPropertyData();
+        let old: any = {};
+        properties = properties.filter(function( obj: any ) {
+            if (obj.id === id) {
+                old = obj;
+            }
+            return obj.id !== id;
+        });
+        return callback(null, old);
     }
 
     /**
@@ -43,27 +51,44 @@ class Properties extends ApplicationEntity {
      */
     public getByName(name: string, callback: any) {
         let properties = this.getPropertyData();
-
-        let result = properties.filter(function( obj: any ) {
-            return obj.name === name;
+        let old: any = {};
+        properties = properties.filter(function( obj: any ) {
+            if (obj.name === name) {
+                old = obj;
+            }
+            return obj.name !== name;
         });
-
-        return result;
+        return callback(null, old);
     }
 
     /**
-     * Updates a tag with the given ID
-     * @param id
+     * Updates a property with the given name
+     * @param name
      * @param params
      * @param callback
      * @returns {IQuery}
      */
-    public update(id: number, params: any, callback: any) {
+    public update(name: string, params: any, callback: any) {
+        let properties = this.getPropertyData();
+        let old: any = {};
+        properties = properties.filter(function( obj: any ) {
+            if (obj.name === name) {
+                obj.name = params.name;
+                obj.attributes = params.attributes;
+                old = obj;
+            }
+            return true;
+        });
 
+        this.fileManager.writeJSON({properties: properties},
+            this.filePath + '/templates/',
+            'properties',
+        );
+        return callback(null, old);
     }
 
     /**
-     * Inserts a row into the logbook table
+     * Inserts a row into the property table
      * @param params
      * @param callback
      * @returns {IQuery}
@@ -71,6 +96,7 @@ class Properties extends ApplicationEntity {
     public insert(params: any, callback: any) {
         let propertyData: any = this.getPropertyData();
         let newProperty = {
+            id: this.genId,
             name: params.name,
             attributes: params.attributes, // array of attribute objects
         };
@@ -78,15 +104,16 @@ class Properties extends ApplicationEntity {
         if (propertyData === undefined) {
             propertyData = [];
         }
+
         propertyData.push(newProperty);
 
-        this.fileManager.writeJSON({property: propertyData},
+        this.fileManager.writeJSON({properties: propertyData},
             this.filePath + '/templates/',
             'properties',
         );
 
         // commit and push the results
-        return callback(newProperty);
+        return callback(null, newProperty);
     }
 
     /**
@@ -107,10 +134,10 @@ class Properties extends ApplicationEntity {
         });
 
         this.fileManager.writeJSON({properties: propertyData},
-        this.filePath + '/properties/',
+        this.filePath + '/templates/',
         'properties',
         );
-        return callback(oldProperty);
+        return callback(null, oldProperty);
     };
 
 }

@@ -39,12 +39,8 @@ class Writer {
      * @param filepath Path to the file to open (with extensions)
      */
     importJSON(filepath) {
-        fs.readFile(filepath, function (err, data) {
-            if (err) {
-                return console.error(err);
-            }
-            return JSON.parse(data.toString());
-        });
+        let fileVal = fs.readFileSync(filepath);
+        return JSON.parse(fileVal.toString());
     }
     /**
      * Reads the directory given, returns all files or folders in directory

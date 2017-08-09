@@ -52,15 +52,6 @@ class GitLab {
         );
     }
 
-    public login() {
-        ///
-    }
-
-    public checkPermissions() {
-        ///
-
-    }
-
     /**
      * Sets the path and method for a request
      * @param path

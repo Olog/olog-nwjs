@@ -27,7 +27,10 @@ class Logbooks extends ApplicationEntity {
      * @returns {IQuery}
      */
     public all(page: any, callback: any) {
-        return this._gitlab.groupDetails(callback);
+        //return this._gitlab.groupDetails(callback);
+        this.fileManager.getDirFiles(this.conn.pathName, true, function(res : any){
+            return callback(null, res);
+        });
     }
 
 
@@ -78,7 +81,7 @@ class Logbooks extends ApplicationEntity {
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(id : number, callback : any){
+    public destroy(id: number, callback: any){
 
     }
 
@@ -88,7 +91,7 @@ class Logbooks extends ApplicationEntity {
      * @param callback
      * @returns {IQuery}
      */
-    public destroybyName(tagname : string, callback : any){
+    public destroybyName(tagname: string, callback: any){
 
     }
 

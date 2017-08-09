@@ -9,7 +9,7 @@ import { assert } from 'chai';
 import * as express from 'express';
 import * as request from 'supertest';
 
-import * as app from './../app/index';
+import * as app from './app';
 import * as jsonschema from './jsonschema';
 
 let handler: express.Application;

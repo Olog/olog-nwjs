@@ -7,11 +7,36 @@ import * as bodyparser from 'body-parser';
 import * as express from 'express';
 import * as session from 'express-session';
 
-import * as handlers from '../app/shared/handlers';
-import * as status from '../app/shared/status';
-
 // application singleton
 let app: express.Application;
+
+// db connection
+import GitStor = require('../lib/storage/main');
+import Auth = require('../lib/authentication/auth');
+import handlers = require('../app/shared/handlers');
+import status = require('../app/shared/status');
+
+import IndexRouter = require('../app/routes/indexrouter');
+
+let configurations: any = {
+  "authconfig" : {},
+  "gitConfigs": {
+    "repo_conf": {
+      "remote_name": "origin",
+      "local_path": "./testdir",
+      "url": "",
+    },
+    "auth": {
+      "username": "Tester",
+      "email": "testemail@email.com",
+      "password": "password",
+    },
+    "gitlabConfigs": {
+      "privateToken": "",
+      "namespaceId": "",
+    },
+  },
+};
 
 // application logging
 export let log = console.log;
@@ -41,7 +66,14 @@ export async function start(): Promise<express.Application> {
   app.use(express.static(path.resolve(__dirname, '..', '..', 'public')));
   app.use(express.static(path.resolve(__dirname, '..', '..', 'bower_components')));
 
+  let git = new GitStor(configurations.gitConfigs);
+
   app.use('/status', status.router);
+
+  let auth = new Auth(configurations.authconfig);
+
+  // set the routes for all the models and connection to the database
+  new IndexRouter(app, git, auth);
 
   // no handler found for request
   app.use(handlers.notFoundHandler);

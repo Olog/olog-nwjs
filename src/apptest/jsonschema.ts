@@ -34,3 +34,15 @@ export function checkValid(name: string): (res: supertest.Response) => void {
     }
   };
 };
+
+/**
+ * Compare two objects found in a file
+ * @param filepath
+ * @param object
+ * @returns {boolean}
+ */
+export function checkFileContnts(filepath: string, object: any) {
+  let fileVal: any = fs.readFileSync(filepath);
+  let res = JSON.parse(fileVal.toString());
+  return (res === object);
+};

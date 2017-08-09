@@ -8,7 +8,7 @@ class Tag extends ApplicationModel {
 
 
     constructor(connection: any) {
-        super(new Tags('logbooks', connection), 'tags');
+        super(new Tags('tags', connection), 'tags');
     }
 
 
@@ -40,7 +40,7 @@ class Tag extends ApplicationModel {
      * @returns {IQuery}
      */
     public update(tagName: string, params: any, callback: any) {
-        return this.mainEntity.updateByName(tagName, params, callback);
+        return this.mainEntity.update(tagName, params, callback);
     }
 
     /**
@@ -91,28 +91,13 @@ class Tag extends ApplicationModel {
 
     /**
      * Deletes a row from the table
-     * @param tag_id
+     * @param tagId
      * @param callback
      * @returns {IQuery}
      */
-    public destroy(tag_id: number, callback: any) {
-        return this.mainEntity.destroy(tag_id, callback);
+    public destroy(tagId: number, callback: any) {
+        return this.mainEntity.destroy(tagId, callback);
     }
-
-    /**
-     * Deletes records of tags from a log
-     * @param log_id
-     * @param tagName
-     * @param callback
-     */
-    public destroyByLog(logId: any, tagName: string, callback: any) {
-        //
-    }
-
-    public destroyByName( tagName: string, callback: any) {
-        return this.mainEntity.destroybyName(tagName, callback);
-    }
-
 
 }
 

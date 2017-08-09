@@ -41,15 +41,10 @@ class Writer {
      * Opens and reads from a file with the given path
      * @param filepath Path to the file to open (with extensions)
      */
-    public importJSON(filepath: string) : any{
+    public importJSON(filepath: string): any {
 
-        fs.readFile(filepath, function (err, data) {
-            if (err) {
-                return console.error(err);
-            }
-
-            return JSON.parse(data.toString());
-        });
+        let fileVal: any = fs.readFileSync(filepath);
+        return JSON.parse(fileVal.toString());
     }
 
     /**

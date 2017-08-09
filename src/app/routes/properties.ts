@@ -43,7 +43,7 @@ class PropertiesRouter extends ApplicationRouter {
         });
 
         /**
-         * POST /properties/:propName
+         * POST /properties
          *
          * POST method for adding a new property with attributes
          *
@@ -59,8 +59,8 @@ class PropertiesRouter extends ApplicationRouter {
          *      ]
          * }
          */
-        that.router.post('/:propName', function(req: any, res: any){
-            that.model.insert(req.params.propName, req.params.body, function(err: any, elem: any){
+        that.router.post('/', function(req: any, res: any){
+            that.model.insert(req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
                 if (err) {
                     res.send(that.model.setJSON(elem));
@@ -75,44 +75,14 @@ class PropertiesRouter extends ApplicationRouter {
         /**
          * PUT /properties/:propName
          *
-         * PUT method for adding a new Property.
-         *
-         * @param propName
-         * @param data
-         * {
-         *      name : string,
-         *      enum : Active,
-         *      attributes : [
-         *          {
-         *              name : string,
-         *              state : active
-         *          },
-         *          ...
-         *      ]
-         * }
-         */
-        that.router.put('/:propName', function(req: any, res: any){
-            that.model.insert(req.params.propName, req.params.body, function(err: any, elem: any){
-                res.set('Content-Type', 'text/json');
-                if (err) {
-                    res.send(that.model.setJSON(elem));
-                }else {
-                    res.send(that.model.setJSON(elem));
-                }
-            });
-        });
-
-        /**
-         * PUT /properties/:propName/:logId
-         *
-         * PUT method for adding a new property attribute to a log
+         * PUT method for adding a new property attribute
          *
          * @param propName
          * @param logId
          * @param data
          */
-        that.router.put('/:propName/:logId', function(req: any, res: any){
-            that.model.newAttr(req.params.propName, req.params.logId,  req.params.body, function(err: any, elem: any){
+        that.router.put('/:propName', function(req: any, res: any){
+            that.model.newAttr(req.params.propName, req.body, function(err: any, elem: any){
                 res.set('Content-Type', 'text/json');
                 if (err) {
                     res.send(that.model.setJSON(elem));
@@ -140,24 +110,6 @@ class PropertiesRouter extends ApplicationRouter {
             });
         });
 
-        /**
-         * DELETE /properties/:propName/:logId
-         *
-         * DELETE method for removing a properties attribute from a log
-         *
-         * @param propName
-         * @param logId
-         */
-        that.router.delete('/:propName/:logId', function(req: any, res: any){
-            that.model.insert(req.params.propName, function(err: any, elem: any){
-                res.set('Content-Type', 'text/json');
-                if (err) {
-                    res.send(that.model.setJSON(elem));
-                }else {
-                    res.send(that.model.setJSON(elem));
-                }
-            });
-        });
     }
 }
 

@@ -39,6 +39,7 @@ class Tags extends ApplicationEntity {
     public insert(params: any, callback: any) {
         let tagData: any = this.getTagData();
         let newTag =   {
+            id: this.genId,
             name: params.name,
             owner: params.owner,
         };
@@ -63,17 +64,33 @@ class Tags extends ApplicationEntity {
      */
     public getByName(tagname: string, callback: any) {
         let tagData: any = this.getTagData();
-        return callback(tagData[tagname]);
+        let oldTag: any = {};
+        tagData = tagData.filter(function( obj: any ) {
+            if (obj.name === tagname) {
+                oldTag = obj;
+            }
+            return obj.name !== tagname;
+        });
+        return callback(oldTag);
     }
 
-
-    public update(id: number, params: any, callback: any) {
+    public update(tagname: number, params: any, callback: any) {
         let tagData: any = this.getTagData();
-        return callback();
-    }
+        let oldTag: any = {};
+        tagData = tagData.filter(function( obj: any ) {
+            if (obj.name === tagname) {
+                obj.name = params.name;
+                obj.owner = params.owner;
+                oldTag = obj;
+            }
+            return true;
+        });
 
-    public updateByName(tagName: string, params: any, callback: any) {
-        return callback();
+        this.fileManager.writeJSON({tags: tagData},
+            this.filePath + '/templates/',
+            'tags',
+        );
+        return callback(oldTag);
     }
 
     /**
@@ -82,7 +99,7 @@ class Tags extends ApplicationEntity {
      * @param callback
      * @returns {any}
      */
-    public destroybyName(tagname: string, callback: any) {
+    public destroy(tagname: string, callback: any) {
         let tagData: any = this.getTagData();
         let oldTag: any = {};
         tagData = tagData.filter(function( obj: any ) {

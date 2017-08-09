@@ -49,6 +49,7 @@ class Logs extends ApplicationEntity {
         return this.search(page, {}, callback);
     }
 
+
     public search(page: any, searchParams: any, callback: any) {
         if (searchParams === undefined) {
             searchParams = {};
@@ -63,7 +64,7 @@ class Logs extends ApplicationEntity {
      * @returns {IQuery|any}
      */
     public getById(id: number, callback: any) {
-
+        //return using git search
     }
 
     /**
@@ -122,6 +123,7 @@ class Logs extends ApplicationEntity {
      * @returns {IQuery|any}
      */
     public update(id: number, params: any, callback: any) {
+        // Find the log by id using git search
 
     }
 

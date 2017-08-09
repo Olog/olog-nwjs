@@ -3,15 +3,6 @@ import Properties = require('../entities/properties');
 
 /**
  * Class for modifying logs in the database
- * Properties Attributes:
- *      id,
- *      name,
- *      state='Active',
- * Attributes:
- *      id,
- *      property_id,
- *      name,
- *      state='Active'
  */
 class Property extends ApplicationModel{
 
@@ -47,42 +38,17 @@ class Property extends ApplicationModel{
 
     }
 
+    public update(name: string, params: any, callback: any){
+        return this.mainEntity.update(name,params, callback);
+    }
     /**
      * Insert a property with attributes into the database
-     * @param name The Property Name itself
      * @param params Attribute objects to add
      * @param callback
      */
-    public insert(name : string, params : any, callback : any){
-        let returnAll : any = {};
-        this.mainEntity.insert({name : name}, function(err : any, elem : any){
-            if(err){
-                return err;
-            }else{
-                returnAll['property'] = elem;
-                returnAll['property']['attributes'] = [];
-                //add the attributes
-                let id = elem.id;
-                for (let attr of params.attributes){
-                    this._attributesEntity.insert(
-                        {
-                            name : attr.name,
-                            property_id : id
-                        },
-                        function(err : any, elem : any){
-                            if(err){
-                                return err;
-                            }else{
-                                returnAll['property']['attributes'].push(elem);
-                            }
-                        }
-                    )
-                }
-            }
-        });
-        return callback(null, returnAll);
-
-    }
+    public insert(params : any, callback : any){
+        return this.mainEntity.insert(params, callback);
+    };
 
     public destroy(name : string, callback : any){
         return this.mainEntity.destroy(name, callback);
