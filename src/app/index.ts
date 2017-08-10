@@ -234,7 +234,25 @@ async function doStart(): Promise<void> {
   }
 
   configurations =  JSON.parse(configurations.toString());
-
+  configurations = {
+    "authconfig" : {},
+    "gitConfigs": {
+      "repo_conf": {
+        "remote_name": "origin",
+        "local_path": "./testdir",
+        "url": "",
+      },
+      "auth": {
+        "username": "Tester",
+        "email": "testemail@email.com",
+        "password": "password",
+      },
+      "gitlabConfigs": {
+        "privateToken": "",
+        "namespaceId": "",
+      },
+    },
+  };
   let git = new GitStor(configurations.gitConfigs);
 
   app.use('/status', status.router);

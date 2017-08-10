@@ -23,7 +23,7 @@ let configurations: any = {
   "gitConfigs": {
     "repo_conf": {
       "remote_name": "origin",
-      "local_path": "./testdir",
+      "local_path": "../../testdir",
       "url": "",
     },
     "auth": {
@@ -63,6 +63,9 @@ export async function start(): Promise<express.Application> {
     },
   }));
 
+  // view engine configuration
+  app.set('views', path.resolve(__dirname, '../../views'));
+  app.set('view engine', 'pug');
   app.use(express.static(path.resolve(__dirname, '..', '..', 'public')));
   app.use(express.static(path.resolve(__dirname, '..', '..', 'bower_components')));
 
@@ -80,6 +83,9 @@ export async function start(): Promise<express.Application> {
 
   // error handlers
   app.use(handlers.requestErrorHandler);
-
+  app.use(function(err: any, req: any, res: any, next: any) {
+    // Do logging and user-friendly error message display
+    console.error(err);
+  })
   return app;
 }

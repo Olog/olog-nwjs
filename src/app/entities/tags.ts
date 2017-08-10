@@ -28,7 +28,7 @@ class Tags extends ApplicationEntity {
      * @param callback
      */
     public all(page: any, callback: any) {
-        return callback(this.getTagData());
+        return callback(null, this.getTagData());
     }
 
     /**
@@ -53,7 +53,7 @@ class Tags extends ApplicationEntity {
             'tags',
         );
         // commit and push the results
-        return callback(newTag);
+        return callback(null, newTag);
     }
 
     /**
@@ -71,7 +71,7 @@ class Tags extends ApplicationEntity {
             }
             return obj.name !== tagname;
         });
-        return callback(oldTag);
+        return callback(null, oldTag);
     }
 
     public update(tagname: number, params: any, callback: any) {
@@ -90,7 +90,7 @@ class Tags extends ApplicationEntity {
             this.filePath + '/templates/',
             'tags',
         );
-        return callback(oldTag);
+        return callback(null, oldTag);
     }
 
     /**
@@ -112,7 +112,7 @@ class Tags extends ApplicationEntity {
             this.filePath + '/templates/',
             'tags',
         );
-        return callback(oldTag);
+        return callback(null, oldTag);
     }
 
 }
