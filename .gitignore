@@ -1,0 +1,29 @@
+
+# NPM package installations
+node_modules/
+
+# NPM debug log
+npm-debug.log
+
+# Ignore Typescript cache
+.tscache
+
+# Ignore grunt-ts crumb
+.baseDir.ts
+
+# Ignore build directory
+/app/
+/lib/
+
+# Ignore JetBrains IDE config folder content
+.idea
+
+# Ignore test directory
+/test/app/
+/test/apptest/
+/test/lib/
+/testdir/
+
+# Ignore configuration files
+/config/
+
