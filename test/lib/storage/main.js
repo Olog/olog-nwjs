@@ -1,7 +1,7 @@
 "use strict";
 const NG = require("nodegit");
 const FileManager = require("./writer");
-// import * as gitGrep from './../../../node_modules/git-grep/';
+//import * as gitGrep from 'git-grep';
 /**
  * Class for writing/reading data from the git repo
  */

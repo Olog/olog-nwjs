@@ -2,7 +2,7 @@ import NG = require('nodegit');
 import FileManager = require('./writer');
 import fs = require('fs');
 
-// import * as gitGrep from './../../../node_modules/git-grep/';
+import {*} as git from 'git-grep';
 
 /**
  * Class for writing/reading data from the git repo
@@ -10,7 +10,6 @@ import fs = require('fs');
 class StorageDir {
 
     private _fileManager : any = new FileManager();
-
 
     // name of folder containing the repository remote
     private _folderName : string = 'ologDir';

@@ -33,6 +33,7 @@ describe('Tags', function() {
         chai.request(handler)
             .get('/tags')
             .end((err: any, res: any) => {
+                assert.equal(res, 'OK', 'Expected application status is "OK"');
                 res.should.have.status(200);
                 let body = JSON.parse(res.text);
                 body.should.have.property('tags');

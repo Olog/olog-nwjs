@@ -20,7 +20,6 @@ class ApplicationModel {
         return uuidv1();
     }
 
-
     /**
      * constructor
      * @param tablename Name of Table

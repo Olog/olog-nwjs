@@ -2,12 +2,20 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es2016",
+        "allowJs": true,
         "alwaysStrict": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
         "removeComments": false,
         "preserveConstEnums": true,
-        "sourceMap": false
+        "sourceMap": false,
+        "typeRoots": [
+            "../node_modules/@types",
+            "../@types"
+        ],
+        "types": [
+            "git-grep"
+        ]
     }
 }
