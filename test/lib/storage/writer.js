@@ -9,7 +9,7 @@ class Writer {
      * constructor
      */
     constructor() {
-        // number of spaces the JSON will be indented on each line
+        // number of spaces JSON will be indented on each line
         this._filespaceCount = 4;
     }
     /**

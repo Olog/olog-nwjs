@@ -6,7 +6,7 @@ import mkdirp = require('mkdirp');
  */
 class Writer {
 
-    // number of spaces the JSON will be indented on each line
+    // number of spaces JSON will be indented on each line
     private _filespaceCount : number = 4;
 
     /**
@@ -34,6 +34,40 @@ class Writer {
             if (err) return false;
         });
         fs.writeFileSync(filepath + '/' + filename + '.json', JSON.stringify(data, null, this._filespaceCount));
+        return true;
+    }
+
+    /**
+     * Creates a folder at the given path with the given name
+     * @param foldername
+     * @param filepath
+     */
+    public writeFolder(foldername: string, filepath: string){
+        mkdirp(filepath + '/foldername', function (err) {
+            if (err) return false;
+        });
+        return true;
+    }
+
+    /**
+     * remove a folder by name + path
+     * @param foldername
+     * @param filepath
+     */
+    public removeFolder(foldername: string, filepath: string){
+
+    }
+
+    /**
+     * rename a folder given its name + path
+     * @param foldername
+     * @param newfoldername
+     * @param filepath
+     */
+    public renameFolder(foldername: string, newfoldername: string, filepath: string){
+        fs.rename(filepath + foldername, filepath + newfoldername, function(err) {
+            if ( err ) return false;
+        });
         return true;
     }
 

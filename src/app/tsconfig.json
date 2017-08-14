@@ -10,12 +10,11 @@
         "removeComments": false,
         "preserveConstEnums": true,
         "sourceMap": false,
-        "typeRoots": [
-            "../node_modules/@types",
-            "@types"
+        "includes": [
+            "../types/*"
         ],
-        "types": [
-            "git-grep"
+        "files": [
+                "../types/git-grep.d.ts"
         ]
     }
 }

@@ -27,7 +27,7 @@ declare namespace gitgrep {
   export interface IGitGrep {
     (repoPath: string, options?: IGitGrepOptions): gitgrep.IGitGrepEmitter;
   }
-}
+};
 
 declare module 'git-grep' {
 
@@ -35,5 +35,4 @@ declare module 'git-grep' {
 
   export = gitGrep;
 };
-
 

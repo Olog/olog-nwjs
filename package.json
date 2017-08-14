@@ -1,7 +1,8 @@
 {
-  "name": "webapp",
+  "name": "olog",
   "version": "0.0.1",
   "private": true,
+  "typings": "./src/types/git-grep.d.ts",
   "scripts": {
     "start": "node bin/app",
     "debug-start": "DEBUG=express:* node bin/app",
