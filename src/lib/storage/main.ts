@@ -275,7 +275,10 @@ class StorageDir {
         });
     }
 
-
+    /**
+     * parses the string search parameters
+     * @param searchParams
+     */
     private stringSearchParams (searchParams: any) {
 
         let searchString = '';
@@ -293,6 +296,11 @@ class StorageDir {
         }
     }
 
+    /**
+     * converts an entry of strings to folders
+     * @param items
+     * @returns {Array}
+     */
     private convertToFolders (items: any) {
         let newArr = [];
         for (let entry of items) {
@@ -303,16 +311,16 @@ class StorageDir {
         return newArr;
     }
 
-    private returnFromSorted(): any {
 
-    }
-
-    public search(term: string): any {
-        if (term === {}) {
-            return this.returnFromSorted();
-        }
+    /**
+     * searches a directory using the search terms
+     * @param term
+     */
+    public search(term: any): any {
+        return this._fileManager.searchDirFiles(term);
 
         /**
+         * // git grep search through files:
          *
          *   gitGrep((this._pathName + '/.git'), {
          *      rev: 'HEAD',

@@ -46,6 +46,7 @@ class Logs extends ApplicationEntity {
      * @param callback
      */
     public all(page: any, callback: any) {
+        // find parent directory, search rest of folders
         return this.search(page, {}, callback);
     }
 
@@ -64,7 +65,7 @@ class Logs extends ApplicationEntity {
      * @returns {IQuery|any}
      */
     public getById(id: number, callback: any) {
-        //return using git search
+        // return using git search
     }
 
     /**

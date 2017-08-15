@@ -29,6 +29,9 @@ declare namespace gitgrep {
   }
 };
 
+/**
+ * git-grep
+ */
 declare module 'git-grep' {
 
   var gitGrep: gitgrep.IGitGrep;
