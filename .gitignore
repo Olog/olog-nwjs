@@ -25,5 +25,6 @@ npm-debug.log
 /testdir/
 
 # Ignore configuration files
-/config/
+/config/configs.json
+/config/examplerc
 

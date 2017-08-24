@@ -1,0 +1,18 @@
+{
+  "gitConfigs": {
+    "repo_conf": {
+      "remote_nam": "origin",
+      "local_path": "path",
+      "url": "git url"
+    },
+    "auth": {
+      "username": "username",
+      "email": "email",
+      "password": "pass"
+    },
+    "gitlabConfigs": {
+      "privateToken": "tok",
+      "namespaceId": "id"
+    }
+  }
+}

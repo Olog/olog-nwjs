@@ -1,13 +1,9 @@
-Web Application Template
+Olog-nwjs
 ========================
 
-Description
+Configuration File Structure
 -----------
-This repostiory provides a template for new web application projects
-using [NodeJS](https://nodejs.org) (runtime), [Express](https://expressjs.com/) (routing),
-[Pug](https://pugjs.org) (templating) and [TypeScript](https://www.typescriptlang.org/) (language).
-
-
+Placed in
 Quick Start
 -----------
 ```
@@ -17,16 +13,23 @@ $ ./bin/app          # Run the application with default configuration
 $ ./bin/app --config ./config/examplerc   # Run the application with custom configuration
 ```
 
+Running Tests
+----------
+```
+$ npm test
+```
+Testing directory needs to be created under root folder and configired with apptest
 
-Roadmap
--------
-* An example of testing using Mocha, SuperTest, etc.
-* An example of using Typescript on client
-* Move some code from 'src/app/shared' to separate library (on NPM?)
-* Refine the project structure (how can it be improved?)
-
-
-Development
+Git Directory Structure
 -----------
-The recommended development environment is [VS Code](https://code.visualstudio.com/)
-as it provides very good integration with TypeScript.
+.
++-- logbook_folder
++-- logbooks_folder
+|   +-- logs
++-- templates
+|   +-- properties.json
+|   +-- tags.json
+
+Gitlab Setup
+---------------
+For logbook entries, there should be a group to represent the main application structure, with projects under it for each logbook.

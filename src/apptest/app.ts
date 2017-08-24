@@ -16,6 +16,7 @@ import Auth = require('../lib/authentication/auth');
 import handlers = require('../app/shared/handlers');
 import status = require('../app/shared/status');
 
+import jsonschema = require('./jsonschema');
 import IndexRouter = require('../app/routes/indexrouter');
 
 let configurations: any = {
@@ -46,6 +47,8 @@ export let error = console.error;
 // start the test application
 export async function start(): Promise<express.Application> {
   app = express();
+
+  jsonschema.initializeDir();
 
   app.use(bodyparser.json());
   app.use(bodyparser.urlencoded({

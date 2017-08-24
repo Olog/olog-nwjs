@@ -317,7 +317,7 @@ class StorageDir {
      * @param term
      */
     public search(term: any): any {
-        return this._fileManager.searchDirFiles(term);
+        return this._fileManager.searchDirFiles(this._pathName, term);
 
         /**
          * // git grep search through files:

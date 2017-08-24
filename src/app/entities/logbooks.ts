@@ -27,10 +27,10 @@ class Logbooks extends ApplicationEntity {
      * @returns {IQuery}
      */
     public all(page: any, callback: any) {
-        //return this._gitlab.groupDetails(callback);
-        this.fileManager.getDirFiles(this.conn.pathName, true, function(res : any){
-            return callback(null, res);
-        });
+        return this._gitlab.groupDetails(callback);
+        //this.fileManager.getDirFiles(this.conn.pathName, true, function(res : any){
+        //    return callback(null, res);
+        //});
     }
 
 

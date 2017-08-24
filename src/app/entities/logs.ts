@@ -55,7 +55,7 @@ class Logs extends ApplicationEntity {
         if (searchParams === undefined) {
             searchParams = {};
         }
-        return this.conn.search(searchParams);
+        return callback(null, this.conn.search(searchParams));
     }
 
     /**
@@ -95,7 +95,6 @@ class Logs extends ApplicationEntity {
             date.timestamp,
         );
 
-
         // save the files to the correct folder location
         // commits and pushes to repo master branch
         this.conn.commit(
@@ -110,7 +109,6 @@ class Logs extends ApplicationEntity {
                 email: this.user.email,
             },
         );
-
 
         return callback(null, temp);
     }
