@@ -34,10 +34,23 @@ class Property extends ApplicationModel{
         return this.mainEntity.getByName(name, callback);
     }
 
+    /**
+     * Creates a new attribute for a given property
+     * @param propName
+     * @param id
+     * @param params
+     * @param callback
+     */
     public newAttr(propName : string, id: number, params : any, callback : any){
 
     }
 
+    /**
+     * Updates a property given its name
+     * @param name
+     * @param params
+     * @param callback
+     */
     public update(name: string, params: any, callback: any){
         return this.mainEntity.update(name,params, callback);
     }
@@ -50,6 +63,11 @@ class Property extends ApplicationModel{
         return this.mainEntity.insert(params, callback);
     };
 
+    /**
+     * Deletes a property from all logs given its name
+     * @param name
+     * @param callback
+     */
     public destroy(name : string, callback : any){
         return this.mainEntity.destroy(name, callback);
     }

@@ -1,10 +1,7 @@
 Olog-nwjs
 ========================
 
-Configuration File Structure
------------
-Placed in
-Quick Start
+Configuration
 -----------
 ```
 $ npm install        # Download and install dependencies (including Typescript)
@@ -18,17 +15,19 @@ Running Tests
 ```
 $ npm test
 ```
-Testing directory needs to be created under root folder and configired with apptest
+*Testing directory needs to be created under root folder and configured with apptest*
 
 Git Directory Structure
 -----------
+```
 .
 +-- logbook_folder
-+-- logbooks_folder
++-- logbook_folder
 |   +-- logs
 +-- templates
 |   +-- properties.json
 |   +-- tags.json
+```
 
 Gitlab Setup
 ---------------

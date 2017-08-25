@@ -2,10 +2,14 @@ import User = require('./user');
 import uuidv1 = require('uuid/v1');
 
 class ApplicationModel {
+
+    // name for the db table/folder
     private _tableName : any = null;
 
+    // the object holding the data folder
     private _conn : any = null;
 
+    // user object
     private _user : any;
 
     get user(): any {
