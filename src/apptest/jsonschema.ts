@@ -7,6 +7,7 @@ import * as path from 'path';
 
 import * as jsonschema from 'jsonschema';
 import * as supertest from 'supertest';
+import mkdirp = require('mkdirp');
 
 export const validator = new jsonschema.Validator();
 
@@ -46,3 +47,30 @@ export function checkFileContnts(filepath: string, object: any) {
   let res = JSON.parse(fileVal.toString());
   return (res === object);
 };
+
+/**
+ * Empties the testing directory folders, and restarts with new data
+ */
+export function initializeDir() {
+  let filepath = "../../testdir";
+
+  mkdirp(filepath, function (err) {
+    if (err) return false;
+
+    // initialize a logbook
+    mkdirp(filepath + "/logbook1", function (err) {
+      if (err) return false;
+
+      // initialize the templates folder
+      mkdirp(filepath + "/templates", function (err) {
+        if (err) return false;
+
+        // initialize the tags and properties
+        fs.writeFileSync(filepath + '/tags' + '.json', JSON.stringify({"tags": []}, null, 4));
+        fs.writeFileSync(filepath + '/properties' + '.json', JSON.stringify({"properties": []}, null, 4));
+      });
+    });
+  });
+
+};
+

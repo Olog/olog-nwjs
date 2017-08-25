@@ -9,6 +9,12 @@
         "strictNullChecks": true,
         "removeComments": false,
         "preserveConstEnums": true,
-        "sourceMap": false
+        "sourceMap": false,
+        "includes": [
+            "../types/*"
+        ],
+        "files": [
+                "../types/git-grep.d.ts"
+        ]
     }
 }

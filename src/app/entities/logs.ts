@@ -46,6 +46,7 @@ class Logs extends ApplicationEntity {
      * @param callback
      */
     public all(page: any, callback: any) {
+        // find parent directory, search rest of folders
         return this.search(page, {}, callback);
     }
 
@@ -54,7 +55,7 @@ class Logs extends ApplicationEntity {
         if (searchParams === undefined) {
             searchParams = {};
         }
-        return this.conn.search(searchParams);
+        return callback(null, this.conn.search(searchParams));
     }
 
     /**
@@ -64,7 +65,7 @@ class Logs extends ApplicationEntity {
      * @returns {IQuery|any}
      */
     public getById(id: number, callback: any) {
-        //return using git search
+        // return using git search
     }
 
     /**
@@ -94,7 +95,6 @@ class Logs extends ApplicationEntity {
             date.timestamp,
         );
 
-
         // save the files to the correct folder location
         // commits and pushes to repo master branch
         this.conn.commit(
@@ -109,7 +109,6 @@ class Logs extends ApplicationEntity {
                 email: this.user.email,
             },
         );
-
 
         return callback(null, temp);
     }

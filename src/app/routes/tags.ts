@@ -19,7 +19,7 @@ class TagsRouter extends ApplicationRouter {
                 if (err) {
                     res.send(that.model.setJSON(err));
                 }else {
-                    res.send(that.model.setJSON(elem));
+                    res.json(that.model.setJSON(elem));
                 }
             });
         });

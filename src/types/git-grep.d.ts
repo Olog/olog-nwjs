@@ -4,9 +4,9 @@
 declare namespace gitgrep {
 
   export interface IGrepGrepResult {
-  file: string;
-  line: string;
-  text: string;
+    file: string;
+    line: string;
+    text: string;
   }
 
   export interface IGitGrepHandler {
@@ -27,11 +27,15 @@ declare namespace gitgrep {
   export interface IGitGrep {
     (repoPath: string, options?: IGitGrepOptions): gitgrep.IGitGrepEmitter;
   }
-}
+};
 
+/**
+ * git-grep
+ */
 declare module 'git-grep' {
 
   var gitGrep: gitgrep.IGitGrep;
 
   export = gitGrep;
-}
+};
+

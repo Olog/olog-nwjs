@@ -2,22 +2,26 @@ import NG = require('nodegit');
 import FileManager = require('./writer');
 import fs = require('fs');
 
-// import * as gitGrep from './../../../node_modules/git-grep/';
+// import gitGrep = require('git-grep');
 
 /**
  * Class for writing/reading data from the git repo
  */
 class StorageDir {
 
+    // Write/read from files in the repository folder
     private _fileManager : any = new FileManager();
-
 
     // name of folder containing the repository remote
     private _folderName : string = 'ologDir';
 
     // Configurations for git
     private _pathName : string = '';
+
+    // remote url where all commits will be pushed
     private _remoteURL : string = '';
+
+    // remote name (optional)
     private _remoteName : string = 'origin';
 
     // Repository object
@@ -26,10 +30,13 @@ class StorageDir {
     // Remote object
     private _remote : any;
 
+    // object to handle Gitlab actions
     private _gitlab : any;
 
+    // keeps index for commit head
     private _index : any;
 
+    // git head object
     private _oid : any;
 
     get gitlab(): any {
@@ -72,12 +79,17 @@ class StorageDir {
             this._remoteName = configs.repo_conf.remote_name;
         }
 
-        console.log('Initializing Repo...');
-
+        // clone the repository on initial application startup
         NG.Clone.clone(this.remoteURL, this._pathName).then(function(repository: any) {
+
+            // set the repo instance
             this._repo = repository;
+
+            // git fetch
             return repository.fetchAll({
                 callbacks: {
+
+                    // credentials for pushing changes to the repository are received from the url
                     credentials: function(url: any, userName: any, password: any){
                         return this.auth(userName, password);
                     },
@@ -88,6 +100,8 @@ class StorageDir {
             });
         })
         .then(function() {
+
+            // update the local changes with the repo
             return this._repo.mergeBranches('master', 'origin/master');
         });
     }
@@ -122,23 +136,28 @@ class StorageDir {
     }
 
     /**
-     *
+     * Commit all changes made in the master repository
      * @param data Data for specific git events like commit/ author timestamps
      * @param actionItem File modifications
      * @param msg Commit Message to Print
      * @param person Author name and email for this commit
      */
     public commit(data: any, actionItem: string, msg: string, person: any) {
+
         // get index for add/commits
         NG.Repository.open(this._pathName + '/.git')
-            .then(function(repoResult){
+        .then(function(repoResult){
+
+            // get the updated repository object
             this._repo = repoResult;
             return this._repo.refreshIndex();
         })
             .then(function(indexResult: any){
+                // get updated index
                 this._index = indexResult;
             })
             .then(function(){
+                // check if file is added/removed
                 if (actionItem !== null) {
                     return this.add();
                 } else {
@@ -154,16 +173,20 @@ class StorageDir {
             })
             .then(function(oidResult: any){
                 this._oid = oidResult;
+
+                // set changes to head with a commit
                 return NG.Reference.nameToId(this._repo, 'HEAD');
             })
             .then(function(head: any){
-                return this._repo.getCommit(head);
                 // return the commit to push to master
+                return this._repo.getCommit(head);
             })
             .then(function(parent: any){
+                // sign the commit with the given credentials/ timestamps
                 let committer = this.sign(person.email, person.name, data.auditTime, -300);
                 let author = this.sign(person.email, person.name, data.eventTime, -300);
 
+                // return the repository commit created
                 return this._repo.createCommit(
                     'HEAD',
                     author,
@@ -174,9 +197,8 @@ class StorageDir {
                 );
             })
             .then(function(commitId: any){
-                // commit finished
-                console.log('New Commit :', commitId);
 
+                // return updated instance of the remote to push changes to
                 return NG.Remote.create(
                     this._repo, this._remoteName, this._remoteURL,
                 );
@@ -184,9 +206,11 @@ class StorageDir {
             .then(function(remoteResult){
                 this._remote = remoteResult;
                 return this._remote.push(
+                    // push commit to the remote instantly
                     ['refs/heads/master:refs/heads/master'],
                     {
                         callbacks: {
+                            // use credentials from the url
                             credentials: function(url: any, userName: any, password: any){
                                 this.auth(userName, password);
                             },
@@ -237,6 +261,10 @@ class StorageDir {
     }
 
 
+    /**
+     * Fetch changes from the repository
+     * @returns {Promise<number>|Promise<Response>|Promise<void>}
+     */
     public fetchAll() {
         return this._repo.fetch('origin', {
             callbacks: {
@@ -247,6 +275,10 @@ class StorageDir {
         });
     }
 
+    /**
+     * parses the string search parameters
+     * @param searchParams
+     */
     private stringSearchParams (searchParams: any) {
 
         let searchString = '';
@@ -264,6 +296,11 @@ class StorageDir {
         }
     }
 
+    /**
+     * converts an entry of strings to folders
+     * @param items
+     * @returns {Array}
+     */
     private convertToFolders (items: any) {
         let newArr = [];
         for (let entry of items) {
@@ -274,16 +311,16 @@ class StorageDir {
         return newArr;
     }
 
-    private returnFromSorted(): any {
 
-    }
-
-    public search(term: string): any {
-        if (term === {}) {
-            return this.returnFromSorted();
-        }
+    /**
+     * searches a directory using the search terms
+     * @param term
+     */
+    public search(term: any): any {
+        return this._fileManager.searchDirFiles(this._pathName, term);
 
         /**
+         * // git grep search through files:
          *
          *   gitGrep((this._pathName + '/.git'), {
          *      rev: 'HEAD',
