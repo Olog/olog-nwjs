@@ -30,10 +30,21 @@ class Log extends ApplicationModel {
 
     }
 
+    /**
+     * Update a log
+     * @param params
+     * @param callback
+     */
     public update(params: any, callback: any) {
         return this.mainEntity.update(params, callback);
     }
 
+    /**
+     * Returns all the logs in an array
+     * @param page
+     * @param searchParams
+     * @param callback
+     */
     public all(page: any, searchParams: any, callback: any) {
         let params: any = searchParams;
         delete params.page;
@@ -45,6 +56,11 @@ class Log extends ApplicationModel {
         }
     }
 
+    /**
+     * retrieves a log by its id
+     * @param id
+     * @param callback
+     */
     public getById(id: number, callback: any) {
         return this.mainEntity.get(id, callback);
     }

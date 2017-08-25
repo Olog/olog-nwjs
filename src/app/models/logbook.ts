@@ -111,6 +111,12 @@ class Logbook extends ApplicationModel {
 //
     }
 
+    /**
+     * Removes a logbook by its name
+     * @param logbookName
+     * @param callback
+     * @returns {any}
+     */
     public destroyByName( logbookName: string, callback: any) {
         return this.mainEntity.destroybyName(logbookName, callback);
     }

@@ -51,6 +51,13 @@ class Logs extends ApplicationEntity {
     }
 
 
+    /**
+     * Searches for a specific logbook given parameters
+     * @param page
+     * @param searchParams
+     * @param callback
+     * @returns {any}
+     */
     public search(page: any, searchParams: any, callback: any) {
         if (searchParams === undefined) {
             searchParams = {};

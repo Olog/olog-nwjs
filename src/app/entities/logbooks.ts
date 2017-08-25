@@ -12,6 +12,7 @@ import GitLab = require('../../lib/gitlab/index');
  */
 class Logbooks extends ApplicationEntity {
 
+    // gitlab connection
     private _gitlab: any;
 
     constructor(tablename: string, connection: any) {

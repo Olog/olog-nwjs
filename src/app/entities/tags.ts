@@ -74,6 +74,13 @@ class Tags extends ApplicationEntity {
         return callback(null, oldTag);
     }
 
+    /**
+     * Updates a tag
+     * @param tagname
+     * @param params
+     * @param callback
+     * @returns {any}
+     */
     public update(tagname: number, params: any, callback: any) {
         let tagData: any = this.getTagData();
         let oldTag: any = {};

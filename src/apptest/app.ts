@@ -89,6 +89,7 @@ export async function start(): Promise<express.Application> {
   app.use(function(err: any, req: any, res: any, next: any) {
     // Do logging and user-friendly error message display
     console.error(err);
-  })
+  });
+
   return app;
 }
